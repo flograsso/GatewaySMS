@@ -34,6 +34,8 @@ namespace Gateway_SMS
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.Button button_procesarSMS;
+		private System.Windows.Forms.Button button_pararProcesarSMS;
 
 
 		
@@ -71,6 +73,8 @@ namespace Gateway_SMS
 			this.CSQ_label = new System.Windows.Forms.Label();
 			this.AT_label = new System.Windows.Forms.Label();
 			this.panel_verSMS = new System.Windows.Forms.Panel();
+			this.button_pararProcesarSMS = new System.Windows.Forms.Button();
+			this.button_procesarSMS = new System.Windows.Forms.Button();
 			this.button_verSMS = new System.Windows.Forms.Button();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
@@ -204,6 +208,8 @@ namespace Gateway_SMS
 			// panel_verSMS
 			// 
 			this.panel_verSMS.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel_verSMS.Controls.Add(this.button_pararProcesarSMS);
+			this.panel_verSMS.Controls.Add(this.button_procesarSMS);
 			this.panel_verSMS.Controls.Add(this.button_verSMS);
 			this.panel_verSMS.Controls.Add(this.label8);
 			this.panel_verSMS.Controls.Add(this.label4);
@@ -213,6 +219,28 @@ namespace Gateway_SMS
 			this.panel_verSMS.Name = "panel_verSMS";
 			this.panel_verSMS.Size = new System.Drawing.Size(306, 66);
 			this.panel_verSMS.TabIndex = 5;
+			// 
+			// button_pararProcesarSMS
+			// 
+			this.button_pararProcesarSMS.Location = new System.Drawing.Point(151, 34);
+			this.button_pararProcesarSMS.Name = "button_pararProcesarSMS";
+			this.button_pararProcesarSMS.Size = new System.Drawing.Size(120, 23);
+			this.button_pararProcesarSMS.TabIndex = 7;
+			this.button_pararProcesarSMS.Text = "Parar Procesar SMS";
+			this.button_pararProcesarSMS.UseVisualStyleBackColor = true;
+			this.button_pararProcesarSMS.Visible = false;
+			this.button_pararProcesarSMS.Click += new System.EventHandler(this.Button_pararProcesarSMSClick);
+			// 
+			// button_procesarSMS
+			// 
+			this.button_procesarSMS.Location = new System.Drawing.Point(30, 34);
+			this.button_procesarSMS.Name = "button_procesarSMS";
+			this.button_procesarSMS.Size = new System.Drawing.Size(105, 23);
+			this.button_procesarSMS.TabIndex = 6;
+			this.button_procesarSMS.Text = "Procesar SMS";
+			this.button_procesarSMS.UseVisualStyleBackColor = true;
+			this.button_procesarSMS.Visible = false;
+			this.button_procesarSMS.Click += new System.EventHandler(this.button_procesarSMSClick);
 			// 
 			// button_verSMS
 			// 

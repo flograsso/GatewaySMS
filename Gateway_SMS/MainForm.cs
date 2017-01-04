@@ -29,7 +29,7 @@ namespace Gateway_SMS
 		SIM900 sim900;
 		SerialPort serialPort1;
 		DBconnection dbConnection;
-		DataTable dt;
+		
 		
 		public MainForm()
 		{
@@ -149,10 +149,6 @@ namespace Gateway_SMS
 					
 					/*Deshabilito textbox puerto*/
 					textBox_port.Enabled=false;
-					
-					/*Oculto boton de "Ver SMS"*/
-					panel_verSMS.Visible=false;
-					
 
 					/*Agrando para ver el dataGrid*/
 					this.Size = new Size(690, 400);
@@ -177,12 +173,18 @@ namespace Gateway_SMS
 						dataGridView1.AutoResizeColumns();
 						dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 						dataGridView1.Visible=true;
+						
+						/*Oculto boton de "Ver SMS"*/
+						button_verSMS.Visible=false;
+						button_procesarSMS.Visible=true;
+						button_pararProcesarSMS.Visible=true;
+						button_pararProcesarSMS.Enabled=false;
 					}
 					
 				}
 				/*Si no estoy listo para mandar SMS*/
 				else
-				{	
+				{
 					/*Muestro panel estado y panel ver SMS*/
 					this.Size = new Size(340, 323);
 					
@@ -231,6 +233,16 @@ namespace Gateway_SMS
 				dataGridView1.Visible=true;
 			}
 			
+		}
+		void button_procesarSMSClick(object sender, EventArgs e)
+		{
+			button_pararProcesarSMS.Enabled=true;
+			button_procesarSMS.Enabled=false;
+		}
+		void Button_pararProcesarSMSClick(object sender, EventArgs e)
+		{
+			button_pararProcesarSMS.Enabled=false;
+			button_procesarSMS.Enabled=true;
 		}
 	}
 	

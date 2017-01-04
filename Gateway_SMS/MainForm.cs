@@ -24,7 +24,7 @@ namespace Gateway_SMS
 			// The InitializeComponent() call is required for Windows Forms designer support.
 			//
 			InitializeComponent();
-			//Test
+			//Test2
 			//
 			// TODO: Add constructor code after the InitializeComponent() call.
 			//

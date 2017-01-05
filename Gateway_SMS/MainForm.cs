@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using System.Globalization;
@@ -29,6 +30,10 @@ namespace Gateway_SMS
 		SIM900 sim900;
 		SerialPort serialPort1;
 		DBconnection dbConnection;
+		DataTable dt;
+		
+		/*Variable de running*/
+		bool processing;
 		
 		
 		public MainForm()
@@ -50,7 +55,12 @@ namespace Gateway_SMS
 		
 		void MainFormLoad(object sender, EventArgs e)
 		{
+			/*Bloqueo resize del mainform*/
+			this.FormBorderStyle=System.Windows.Forms.FormBorderStyle.FixedSingle;
+			
+			dt = new DataTable();
 			dataGridView1.Visible=false;
+			processing =false;
 			dbConnection = new DBconnection();
 			this.Size = new Size(340, 220);
 			serialPort1 = new SerialPort();
@@ -94,7 +104,7 @@ namespace Gateway_SMS
 				panel_estado.Location=new Point(12,110);
 				
 				panel_estado.Show();
-				this.Size = new Size(340, 250);
+				this.Size = new Size(340, 235);
 				
 				
 				
@@ -150,9 +160,6 @@ namespace Gateway_SMS
 					/*Deshabilito textbox puerto*/
 					textBox_port.Enabled=false;
 
-					/*Agrando para ver el dataGrid*/
-					this.Size = new Size(690, 400);
-					
 					/*Seteo parametros*/
 					dbConnection.setdatabaseName("testcsharp");
 					dbConnection.setServer("localhost");
@@ -162,8 +169,13 @@ namespace Gateway_SMS
 					/*Me conecto a la DB*/
 					if (dbConnection.DBConnect()){
 						
+						/*Agrando para ver el dataGrid*/
+						this.Size = new Size(717, 400);
+						
 						/*Ejecuto query*/
-						dataGridView1.DataSource=dbConnection.executeQuery("SELECT date,number,message,state FROM `sms`");
+						dt.Clear();
+						dt=dbConnection.executeQuery("SELECT phone_id,date,number,message,state FROM `sms`");
+						mostrarDatos(dt);
 						
 						/*Muestro resultados*/
 						dataGridView1.Columns[0].HeaderText="Fecha";
@@ -179,6 +191,14 @@ namespace Gateway_SMS
 						button_procesarSMS.Visible=true;
 						button_pararProcesarSMS.Visible=true;
 						button_pararProcesarSMS.Enabled=false;
+						
+						/*Actualizo label de estado*/
+						BDstatus_label.Text="CONEXION A LA BASE DE DATOS: OK";
+					}
+					else
+					{
+						/*Actualizo label de estado*/
+						BDstatus_label.Text="CONEXION A LA BASE DE DATOS: ERROR";
 					}
 					
 				}
@@ -208,8 +228,7 @@ namespace Gateway_SMS
 		}
 		void Button_verSMSClick(object sender, EventArgs e)
 		{
-			/*Agrando para ver el dataGrid*/
-			this.Size = new Size(690, 400);
+
 			
 			/*Seteo parametros*/
 			dbConnection.setdatabaseName("testcsharp");
@@ -220,8 +239,13 @@ namespace Gateway_SMS
 			/*Me conecto a la DB*/
 			if (dbConnection.DBConnect()){
 				
+				/*Agrando para ver el dataGrid*/
+				this.Size = new Size(717, 400);
+				
 				/*Ejecuto query*/
-				dataGridView1.DataSource=dbConnection.executeQuery("SELECT date,number,message,state FROM `sms`");
+				dt=dbConnection.executeQuery("SELECT phone_id,date,number,message,state FROM `sms`");
+				mostrarDatos(dt);
+				
 				
 				/*Muestro resultados*/
 				dataGridView1.Columns[0].HeaderText="Fecha";
@@ -231,6 +255,14 @@ namespace Gateway_SMS
 				dataGridView1.AutoResizeColumns();
 				dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 				dataGridView1.Visible=true;
+				
+				/*Actualizo label de estado*/
+				BDstatus_label.Text="CONEXION A LA BASE DE DATOS: OK";
+			}
+			else
+			{
+				/*Actualizo label de estado*/
+				BDstatus_label.Text="CONEXION A LA BASE DE DATOS: ERROR";
 			}
 			
 		}
@@ -238,13 +270,67 @@ namespace Gateway_SMS
 		{
 			button_pararProcesarSMS.Enabled=true;
 			button_procesarSMS.Enabled=false;
+			
+			processing= true;
+			procesarSMS();
+			//while (processing){
+			
+			//Thread.Sleep(100);
+			//}
 		}
 		void Button_pararProcesarSMSClick(object sender, EventArgs e)
 		{
 			button_pararProcesarSMS.Enabled=false;
 			button_procesarSMS.Enabled=true;
+			
+			processing = false;
+		}
+		
+		bool parche (){
+			Thread.Sleep(2000);
+			return true;
+		}
+		void procesarSMS(){
+			
+			if(dbConnection.getConnectionState()==ConnectionState.Open){
+				int i = 0;
+				foreach (DataRow dr in dt.Rows){
+					if (dr["state"].ToString() == "NO ENVIADO"){
+						dt.Rows[i]["state"]="ENVIANDO...";
+						mostrarDatos(dt);
+						//if (sim900.enviarSMS(dr["number"].ToString(),dr["message"].ToString())){
+						if(parche()){
+							dbConnection.executeQuery("UPDATE `sms` SET state='TRUE' WHERE phone_id ='"+dr["phone_id"].ToString()+"'");
+							dt.Rows[i]["state"]="ENVIADO";
+							mostrarDatos(dt);
+						}
+	
+					}
+					i++;
+				}
+			}
+		}
+		
+		void mostrarDatos(DataTable dt){
+			
+			foreach (DataRow dr in dt.Rows){
+				if (dr["state"].ToString() == "TRUE"){
+					dr["state"]="ENVIADO";
+				}
+				else
+				{
+					if (dr["state"].ToString() == "FALSE"){
+						dr["state"]="NO ENVIADO";
+					}
+				}
+			}
+			dt.Columns[0].ColumnMapping = MappingType.Hidden;
+			dataGridView1.DataSource=dt;
+			dataGridView1.Refresh();
 		}
 	}
+	
+	
 	
 	public class DBconnection{
 		
@@ -279,6 +365,9 @@ namespace Gateway_SMS
 			this.databasePassword=databasePassword;
 		}
 		
+		public ConnectionState getConnectionState(){
+			return conexion.State;
+		}
 
 		public bool DBConnect(){
 			
@@ -291,7 +380,7 @@ namespace Gateway_SMS
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				MessageBox.Show("No se pudo conectar a la base de datos");
 			}
 			
 			return (conexion.State==ConnectionState.Open);
@@ -498,3 +587,5 @@ namespace Gateway_SMS
 
 	}
 }
+
+

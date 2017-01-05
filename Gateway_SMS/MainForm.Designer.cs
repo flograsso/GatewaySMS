@@ -36,6 +36,8 @@ namespace Gateway_SMS
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Button button_procesarSMS;
 		private System.Windows.Forms.Button button_pararProcesarSMS;
+		private System.Windows.Forms.Label BDstatus_label;
+
 
 
 		
@@ -57,7 +59,7 @@ namespace Gateway_SMS
 		/// This method is required for Windows Forms designer support.
 		/// Do not change the method contents inside the source code editor. The Forms designer might
 		/// not be able to load this method if it was changed manually.
-		private void InitializeComponent()
+		private void InitializeComponent() 
 		{
 			this.panel_conexion = new System.Windows.Forms.Panel();
 			this.textBox_IMEI = new System.Windows.Forms.TextBox();
@@ -69,6 +71,7 @@ namespace Gateway_SMS
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.panel_estado = new System.Windows.Forms.Panel();
+			this.BDstatus_label = new System.Windows.Forms.Label();
 			this.SMSReady_label = new System.Windows.Forms.Label();
 			this.CSQ_label = new System.Windows.Forms.Label();
 			this.AT_label = new System.Windows.Forms.Label();
@@ -175,6 +178,7 @@ namespace Gateway_SMS
 			// panel_estado
 			// 
 			this.panel_estado.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel_estado.Controls.Add(this.BDstatus_label);
 			this.panel_estado.Controls.Add(this.SMSReady_label);
 			this.panel_estado.Controls.Add(this.CSQ_label);
 			this.panel_estado.Controls.Add(this.AT_label);
@@ -183,6 +187,13 @@ namespace Gateway_SMS
 			this.panel_estado.Size = new System.Drawing.Size(306, 93);
 			this.panel_estado.TabIndex = 2;
 			this.panel_estado.Visible = false;
+			// 
+			// BDstatus_label
+			// 
+			this.BDstatus_label.Location = new System.Drawing.Point(161, 19);
+			this.BDstatus_label.Name = "BDstatus_label";
+			this.BDstatus_label.Size = new System.Drawing.Size(165, 32);
+			this.BDstatus_label.TabIndex = 4;
 			// 
 			// SMSReady_label
 			// 
@@ -290,18 +301,19 @@ namespace Gateway_SMS
 			this.dataGridView1.Location = new System.Drawing.Point(325, 12);
 			this.dataGridView1.Name = "dataGridView1";
 			this.dataGridView1.ReadOnly = true;
-			this.dataGridView1.Size = new System.Drawing.Size(342, 338);
+			this.dataGridView1.Size = new System.Drawing.Size(369, 338);
 			this.dataGridView1.TabIndex = 3;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(324, 285);
+			this.ClientSize = new System.Drawing.Size(701, 285);
 			this.Controls.Add(this.panel_verSMS);
 			this.Controls.Add(this.dataGridView1);
 			this.Controls.Add(this.panel_estado);
 			this.Controls.Add(this.panel_conexion);
+			this.MaximizeBox = false;
 			this.Name = "MainForm";
 			this.Text = "Gateway_SMS";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainFormFormClosed);

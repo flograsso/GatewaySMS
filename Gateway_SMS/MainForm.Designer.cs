@@ -37,6 +37,8 @@ namespace Gateway_SMS
 		private System.Windows.Forms.Button button_procesarSMS;
 		private System.Windows.Forms.Button button_pararProcesarSMS;
 		private System.Windows.Forms.Label BDstatus_label;
+		private System.Windows.Forms.Timer timer1;
+		private System.Windows.Forms.Label label_estadoEnvio;
 
 
 
@@ -61,6 +63,7 @@ namespace Gateway_SMS
 		/// not be able to load this method if it was changed manually.
 		private void InitializeComponent() 
 		{
+			this.components = new System.ComponentModel.Container();
 			this.panel_conexion = new System.Windows.Forms.Panel();
 			this.textBox_IMEI = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
@@ -76,6 +79,7 @@ namespace Gateway_SMS
 			this.CSQ_label = new System.Windows.Forms.Label();
 			this.AT_label = new System.Windows.Forms.Label();
 			this.panel_verSMS = new System.Windows.Forms.Panel();
+			this.label_estadoEnvio = new System.Windows.Forms.Label();
 			this.button_pararProcesarSMS = new System.Windows.Forms.Button();
 			this.button_procesarSMS = new System.Windows.Forms.Button();
 			this.button_verSMS = new System.Windows.Forms.Button();
@@ -84,6 +88,7 @@ namespace Gateway_SMS
 			this.label6 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
+			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.panel_conexion.SuspendLayout();
 			this.panel_estado.SuspendLayout();
 			this.panel_verSMS.SuspendLayout();
@@ -101,7 +106,7 @@ namespace Gateway_SMS
 			this.panel_conexion.Controls.Add(this.textBox_port);
 			this.panel_conexion.Controls.Add(this.label2);
 			this.panel_conexion.Controls.Add(this.label1);
-			this.panel_conexion.Location = new System.Drawing.Point(12, 12);
+			this.panel_conexion.Location = new System.Drawing.Point(13, 12);
 			this.panel_conexion.Name = "panel_conexion";
 			this.panel_conexion.Size = new System.Drawing.Size(306, 92);
 			this.panel_conexion.TabIndex = 1;
@@ -219,6 +224,7 @@ namespace Gateway_SMS
 			// panel_verSMS
 			// 
 			this.panel_verSMS.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel_verSMS.Controls.Add(this.label_estadoEnvio);
 			this.panel_verSMS.Controls.Add(this.button_pararProcesarSMS);
 			this.panel_verSMS.Controls.Add(this.button_procesarSMS);
 			this.panel_verSMS.Controls.Add(this.button_verSMS);
@@ -228,25 +234,33 @@ namespace Gateway_SMS
 			this.panel_verSMS.Controls.Add(this.label7);
 			this.panel_verSMS.Location = new System.Drawing.Point(13, 110);
 			this.panel_verSMS.Name = "panel_verSMS";
-			this.panel_verSMS.Size = new System.Drawing.Size(306, 66);
+			this.panel_verSMS.Size = new System.Drawing.Size(306, 92);
 			this.panel_verSMS.TabIndex = 5;
+			// 
+			// label_estadoEnvio
+			// 
+			this.label_estadoEnvio.Location = new System.Drawing.Point(100, 68);
+			this.label_estadoEnvio.Name = "label_estadoEnvio";
+			this.label_estadoEnvio.Size = new System.Drawing.Size(100, 23);
+			this.label_estadoEnvio.TabIndex = 8;
+			this.label_estadoEnvio.Click += new System.EventHandler(this.Label_estadoEnvioClick);
 			// 
 			// button_pararProcesarSMS
 			// 
-			this.button_pararProcesarSMS.Location = new System.Drawing.Point(151, 34);
+			this.button_pararProcesarSMS.Location = new System.Drawing.Point(161, 28);
 			this.button_pararProcesarSMS.Name = "button_pararProcesarSMS";
-			this.button_pararProcesarSMS.Size = new System.Drawing.Size(120, 23);
+			this.button_pararProcesarSMS.Size = new System.Drawing.Size(120, 40);
 			this.button_pararProcesarSMS.TabIndex = 7;
-			this.button_pararProcesarSMS.Text = "Parar Procesar SMS";
+			this.button_pararProcesarSMS.Text = "Detener Procesamiento";
 			this.button_pararProcesarSMS.UseVisualStyleBackColor = true;
 			this.button_pararProcesarSMS.Visible = false;
 			this.button_pararProcesarSMS.Click += new System.EventHandler(this.Button_pararProcesarSMSClick);
 			// 
 			// button_procesarSMS
 			// 
-			this.button_procesarSMS.Location = new System.Drawing.Point(30, 34);
+			this.button_procesarSMS.Location = new System.Drawing.Point(15, 28);
 			this.button_procesarSMS.Name = "button_procesarSMS";
-			this.button_procesarSMS.Size = new System.Drawing.Size(105, 23);
+			this.button_procesarSMS.Size = new System.Drawing.Size(120, 40);
 			this.button_procesarSMS.TabIndex = 6;
 			this.button_procesarSMS.Text = "Procesar SMS";
 			this.button_procesarSMS.UseVisualStyleBackColor = true;
@@ -255,9 +269,9 @@ namespace Gateway_SMS
 			// 
 			// button_verSMS
 			// 
-			this.button_verSMS.Location = new System.Drawing.Point(104, 19);
+			this.button_verSMS.Location = new System.Drawing.Point(80, 19);
 			this.button_verSMS.Name = "button_verSMS";
-			this.button_verSMS.Size = new System.Drawing.Size(75, 23);
+			this.button_verSMS.Size = new System.Drawing.Size(120, 40);
 			this.button_verSMS.TabIndex = 5;
 			this.button_verSMS.Text = "Ver SMS";
 			this.button_verSMS.UseVisualStyleBackColor = true;
@@ -304,11 +318,15 @@ namespace Gateway_SMS
 			this.dataGridView1.Size = new System.Drawing.Size(369, 338);
 			this.dataGridView1.TabIndex = 3;
 			// 
+			// timer1
+			// 
+			this.timer1.Tick += new System.EventHandler(this.Timer1Tick);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(701, 285);
+			this.ClientSize = new System.Drawing.Size(701, 361);
 			this.Controls.Add(this.panel_verSMS);
 			this.Controls.Add(this.dataGridView1);
 			this.Controls.Add(this.panel_estado);

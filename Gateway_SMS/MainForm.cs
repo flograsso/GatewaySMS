@@ -17,6 +17,7 @@ using MySql.Data.MySqlClient;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.IO.Ports;
+using System.ComponentModel;
 
 
 namespace Gateway_SMS
@@ -31,6 +32,7 @@ namespace Gateway_SMS
 		SerialPort serialPort1;
 		DBconnection dbConnection;
 		DataTable dt;
+
 		
 		/*Variable de running*/
 		bool processing;
@@ -43,6 +45,7 @@ namespace Gateway_SMS
 			//
 			InitializeComponent();
 			
+
 			//
 			// TODO: Add constructor code after the InitializeComponent() call.
 			//
@@ -62,7 +65,7 @@ namespace Gateway_SMS
 			dataGridView1.Visible=false;
 			processing =false;
 			dbConnection = new DBconnection();
-			this.Size = new Size(340, 220);
+			this.Size = new Size(340, 235);
 			serialPort1 = new SerialPort();
 			sim900 = new SIM900(ref serialPort1);
 			this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.SerialPort1DataReceived);
@@ -268,43 +271,70 @@ namespace Gateway_SMS
 		}
 		void button_procesarSMSClick(object sender, EventArgs e)
 		{
-			button_pararProcesarSMS.Enabled=true;
+			//Deshabilito los botones de procesar/no procesar
+			button_pararProcesarSMS.Enabled=false;
 			button_procesarSMS.Enabled=false;
 			
+			
+			//Actualizo label
+			label_estadoEnvio.Text="PROCESANDO...";
+			panel_verSMS.Refresh();
+			
+			//Proceso los SMS
 			processing= true;
 			procesarSMS();
-			//while (processing){
 			
-			//Thread.Sleep(100);
-			//}
+			//Actualizo label
+			button_pararProcesarSMS.Enabled=true;
+			label_estadoEnvio.Text="EN ESPERA";
+			
+			//Habilito el boton de parar procesar
+			button_pararProcesarSMS.Enabled=true;
+			
+			//Activo Timer
+			timer1.Interval=10000;
+			timer1.Enabled=true;
+			
 		}
 		void Button_pararProcesarSMSClick(object sender, EventArgs e)
 		{
+			
+
 			button_pararProcesarSMS.Enabled=false;
 			button_procesarSMS.Enabled=true;
 			
 			processing = false;
+			label_estadoEnvio.Text="";
+			
+			
+			timer1.Enabled=false;
 		}
 		
 		bool parche (){
-			Thread.Sleep(2000);
+			//Thread.Sleep(2000);
 			return true;
 		}
 		void procesarSMS(){
 			
 			if(dbConnection.getConnectionState()==ConnectionState.Open){
+				
+				dt.Clear();
+				dt=dbConnection.executeQuery("SELECT phone_id,date,number,message,state FROM `sms`");
+				mostrarDatos(dt);
+				
 				int i = 0;
 				foreach (DataRow dr in dt.Rows){
 					if (dr["state"].ToString() == "NO ENVIADO"){
 						dt.Rows[i]["state"]="ENVIANDO...";
 						mostrarDatos(dt);
-						//if (sim900.enviarSMS(dr["number"].ToString(),dr["message"].ToString())){
-						if(parche()){
+						//if(parche()){
+						if (sim900.enviarSMS(dr["number"].ToString(),dr["message"].ToString())){
+						
 							dbConnection.executeQuery("UPDATE `sms` SET state='TRUE' WHERE phone_id ='"+dr["phone_id"].ToString()+"'");
 							dt.Rows[i]["state"]="ENVIADO";
 							mostrarDatos(dt);
 						}
-	
+						
 					}
 					i++;
 				}
@@ -324,9 +354,39 @@ namespace Gateway_SMS
 					}
 				}
 			}
+			//Oculto la columna de ID
 			dt.Columns[0].ColumnMapping = MappingType.Hidden;
 			dataGridView1.DataSource=dt;
+			//Ordeno por fecha
+			this.dataGridView1.Sort(this.dataGridView1.Columns[0], ListSortDirection.Descending);
 			dataGridView1.Refresh();
+		}
+		
+		
+		void Timer1Tick(object sender, EventArgs e)
+		{
+			if(processing){
+				//Deshabilito el boton de parar procesamiento
+				button_pararProcesarSMS.Enabled=false;
+				
+				//Actualizo label
+				label_estadoEnvio.Text="PROCESANDO...";
+				panel_verSMS.Refresh();
+				
+				//Proceso SMS
+				procesarSMS();
+				
+				//Actualizo label
+				button_pararProcesarSMS.Enabled=true;
+				label_estadoEnvio.Text="EN ESPERA";
+				
+				//Comienzo timer nuevamente
+				timer1.Enabled=true;
+			}
+		}
+		void Label_estadoEnvioClick(object sender, EventArgs e)
+		{
+			
 		}
 	}
 	
@@ -546,7 +606,7 @@ namespace Gateway_SMS
 				
 				do{
 					i++;
-				}while ((result[i] != ':') && ( i<result.Length));
+				}while ((result[i] != ':') && ( i<result.Length-1));
 				
 				if (Char.IsNumber(result[i+2]) && Char.IsNumber(result[i+3])){
 					signal=(Convert.ToString(result[i+2]))+(Convert.ToString(result[i+3]));

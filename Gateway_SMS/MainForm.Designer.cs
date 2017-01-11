@@ -28,7 +28,6 @@ namespace Gateway_SMS
 		private MetroFramework.Controls.MetroLabel SMSReady_label;
 		private MetroFramework.Controls.MetroLabel CSQ_label;
 		private MetroFramework.Controls.MetroLabel AT_label;
-		private System.Windows.Forms.DataGridView dataGridView1;
 		private MetroFramework.Controls.MetroPanel panel_verSMS;
 		private MetroFramework.Controls.MetroLabel label6;
 		private MetroFramework.Controls.MetroLabel label7;
@@ -41,6 +40,8 @@ namespace Gateway_SMS
 		private MetroFramework.Controls.MetroPanel panel_progres;
 		private MetroFramework.Controls.MetroLabel label_estadoEnvio;
 		private MetroFramework.Controls.MetroProgressBar metroProgressBar1;
+		private MetroFramework.Controls.MetroGrid metroGrid1;
+		
 	
 
 
@@ -67,6 +68,9 @@ namespace Gateway_SMS
 		private void InitializeComponent() 
 		{
 			this.components = new System.ComponentModel.Container();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.panel_conexion = new MetroFramework.Controls.MetroPanel();
 			this.button_conectar = new MetroFramework.Controls.MetroTile();
 			this.textBox_IMEI = new System.Windows.Forms.TextBox();
@@ -86,16 +90,16 @@ namespace Gateway_SMS
 			this.SMSReady_label = new MetroFramework.Controls.MetroLabel();
 			this.CSQ_label = new MetroFramework.Controls.MetroLabel();
 			this.AT_label = new MetroFramework.Controls.MetroLabel();
-			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.panel_progres = new MetroFramework.Controls.MetroPanel();
 			this.label_estadoEnvio = new MetroFramework.Controls.MetroLabel();
 			this.metroProgressBar1 = new MetroFramework.Controls.MetroProgressBar();
+			this.metroGrid1 = new MetroFramework.Controls.MetroGrid();
 			this.panel_conexion.SuspendLayout();
 			this.panel_verSMS.SuspendLayout();
 			this.panel_estado.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.panel_progres.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.metroGrid1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// panel_conexion
@@ -307,22 +311,6 @@ namespace Gateway_SMS
 			this.AT_label.TabIndex = 0;
 			this.AT_label.Text = "AT";
 			// 
-			// dataGridView1
-			// 
-			this.dataGridView1.AllowUserToAddRows = false;
-			this.dataGridView1.AllowUserToDeleteRows = false;
-			this.dataGridView1.AllowUserToOrderColumns = true;
-			this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-			this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridView1.Location = new System.Drawing.Point(344, 70);
-			this.dataGridView1.MultiSelect = false;
-			this.dataGridView1.Name = "dataGridView1";
-			this.dataGridView1.ReadOnly = true;
-			this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.dataGridView1.Size = new System.Drawing.Size(510, 363);
-			this.dataGridView1.TabIndex = 3;
-			// 
 			// timer1
 			// 
 			this.timer1.Tick += new System.EventHandler(this.Timer1Tick);
@@ -365,6 +353,57 @@ namespace Gateway_SMS
 			this.metroProgressBar1.Size = new System.Drawing.Size(293, 23);
 			this.metroProgressBar1.TabIndex = 2;
 			// 
+			// metroGrid1
+			// 
+			this.metroGrid1.AllowUserToAddRows = false;
+			this.metroGrid1.AllowUserToDeleteRows = false;
+			this.metroGrid1.AllowUserToOrderColumns = true;
+			this.metroGrid1.AllowUserToResizeRows = false;
+			this.metroGrid1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+			this.metroGrid1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+			this.metroGrid1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			this.metroGrid1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.metroGrid1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+			this.metroGrid1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.metroGrid1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			this.metroGrid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(136)))));
+			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.metroGrid1.DefaultCellStyle = dataGridViewCellStyle2;
+			this.metroGrid1.EnableHeadersVisualStyles = false;
+			this.metroGrid1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			this.metroGrid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			this.metroGrid1.Location = new System.Drawing.Point(331, 70);
+			this.metroGrid1.MultiSelect = false;
+			this.metroGrid1.Name = "metroGrid1";
+			this.metroGrid1.ReadOnly = true;
+			this.metroGrid1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+			dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.metroGrid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+			this.metroGrid1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+			this.metroGrid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.metroGrid1.Size = new System.Drawing.Size(510, 363);
+			this.metroGrid1.TabIndex = 7;
+			this.metroGrid1.Visible = false;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -372,15 +411,16 @@ namespace Gateway_SMS
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
-			this.ClientSize = new System.Drawing.Size(600, 442);
+			this.ClientSize = new System.Drawing.Size(757, 442);
+			this.Controls.Add(this.metroGrid1);
 			this.Controls.Add(this.panel_progres);
-			this.Controls.Add(this.dataGridView1);
 			this.Controls.Add(this.panel_estado);
 			this.Controls.Add(this.panel_conexion);
 			this.Controls.Add(this.panel_verSMS);
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			this.Resizable = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultLocation;
 			this.Text = "Gateway SMS";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainFormFormClosed);
 			this.Load += new System.EventHandler(this.MainFormLoad);
@@ -389,9 +429,9 @@ namespace Gateway_SMS
 			this.panel_verSMS.ResumeLayout(false);
 			this.panel_estado.ResumeLayout(false);
 			this.panel_estado.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			this.panel_progres.ResumeLayout(false);
 			this.panel_progres.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.metroGrid1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

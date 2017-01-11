@@ -70,7 +70,7 @@ namespace Gateway_SMS
 			sim900 = new SIM900(ref serialPort1);
 			
 			//Oculto dataGrid
-			dataGridView1.Visible=false;
+			metroGrid1.Visible=false;
 			
 			//Muestro panel de ver SMS solo con boton de ver SMS
 			button_procesar_SMS.Visible=false;
@@ -122,11 +122,11 @@ namespace Gateway_SMS
 				
 				
 				/*Muestro resultados*/
-				dataGridView1.Columns[0].HeaderText="Fecha";
-				dataGridView1.Columns[1].HeaderText="Estado";
-				dataGridView1.Columns[2].HeaderText="Número";
-				dataGridView1.Columns[3].HeaderText="Mensaje";
-				dataGridView1.Visible=true;
+				metroGrid1.Columns[0].HeaderText="Fecha";
+				metroGrid1.Columns[1].HeaderText="Estado";
+				metroGrid1.Columns[2].HeaderText="Número";
+				metroGrid1.Columns[3].HeaderText="Mensaje";
+				metroGrid1.Visible=true;
 				
 				/*Actualizo label de estado*/
 				BDstatus_label.Text="CONEXION A BD:\r\nOK";
@@ -211,19 +211,18 @@ namespace Gateway_SMS
 				foreach (DataRow dr in dt.Rows){
 					if (dr["state"].ToString() == "NO ENVIADO"){
 						
-						dataGridView1.Rows[i].Selected=true;
-						dataGridView1.Rows[i].Cells[1].Value="ENVIANDO...";
-						dataGridView1.FirstDisplayedScrollingRowIndex=i;
-						dataGridView1.Refresh();
+						//Selecciono celda
+						metroGrid1.Rows[i].Selected=true;
+						metroGrid1.Rows[i].Cells[1].Value="ENVIANDO...";
+						//Scrollea hasta la celda seleccionada
+						metroGrid1.FirstDisplayedScrollingRowIndex=i;
+						metroGrid1.Refresh();
 						
 						
 						//dt.Rows[i]["state"]="ENVIANDO...";
-						
 						//mostrarDatos(dt);
 						
-						//Selecciono celda
-						
-						
+
 						label_estadoEnvio.Text="ENVIANDO...\r\n"+(j).ToString()+"/"+max.ToString();
 						metroProgressBar1.Value=metroProgressBar1.Value+1;
 						panel_progres.Refresh();
@@ -236,12 +235,12 @@ namespace Gateway_SMS
 							dbConnection.executeQuery("UPDATE `sms` SET state='TRUE' WHERE phone_id ='"+dr["phone_id"].ToString()+"'");
 							//dt.Rows[i]["state"]="ENVIADO";
 							//mostrarDatos(dt);
-							dataGridView1.Rows[i].Cells[1].Value="ENVIADO...";
-							dataGridView1.Refresh();
+							metroGrid1.Rows[i].Cells[1].Value="ENVIADO...";
+							metroGrid1.Refresh();
 							j++;
 						}
 						//DesSelecciono celda
-						dataGridView1.Rows[i].Selected=false;
+						metroGrid1.Rows[i].Selected=false;
 					}
 					i++;
 				}
@@ -263,10 +262,10 @@ namespace Gateway_SMS
 			}
 			//Oculto la columna de ID
 			dt.Columns[0].ColumnMapping = MappingType.Hidden;
-			dataGridView1.DataSource=dt;
+			metroGrid1.DataSource=dt;
 			//Ordeno por fecha
-			this.dataGridView1.Sort(this.dataGridView1.Columns[0], ListSortDirection.Descending);
-			dataGridView1.Refresh();
+			this.metroGrid1.Sort(this.metroGrid1.Columns[0], ListSortDirection.Descending);
+			metroGrid1.Refresh();
 		}
 		
 		
@@ -400,11 +399,11 @@ namespace Gateway_SMS
 						
 						
 						/*Muestro resultados*/
-						dataGridView1.Columns[0].HeaderText="Fecha";
-						dataGridView1.Columns[1].HeaderText="Estado";
-						dataGridView1.Columns[2].HeaderText="Número";
-						dataGridView1.Columns[3].HeaderText="Mensaje";
-						dataGridView1.Visible=true;
+						metroGrid1.Columns[0].HeaderText="Fecha";
+						metroGrid1.Columns[1].HeaderText="Estado";
+						metroGrid1.Columns[2].HeaderText="Número";
+						metroGrid1.Columns[3].HeaderText="Mensaje";
+						metroGrid1.Visible=true;
 						
 						/*Oculto boton de "Ver SMS"*/
 						panel_verSMS.Visible=true;
@@ -460,7 +459,7 @@ namespace Gateway_SMS
 			/*Me conecto a la DB*/
 			if (dbConnection.DBConnect()){
 				
-				dataGridView1.Visible=true;
+				metroGrid1.Visible=true;
 				
 				/*Ejecuto query*/
 				dt.Clear();
@@ -469,11 +468,11 @@ namespace Gateway_SMS
 				
 				
 				/*Muestro resultados*/
-				dataGridView1.Columns[0].HeaderText="Fecha";
-				dataGridView1.Columns[1].HeaderText="Estado";
-				dataGridView1.Columns[2].HeaderText="Número";
-				dataGridView1.Columns[3].HeaderText="Mensaje";
-				dataGridView1.Visible=true;
+				metroGrid1.Columns[0].HeaderText="Fecha";
+				metroGrid1.Columns[1].HeaderText="Estado";
+				metroGrid1.Columns[2].HeaderText="Número";
+				metroGrid1.Columns[3].HeaderText="Mensaje";
+				metroGrid1.Visible=true;
 				
 				/*Actualizo label de estado*/
 				BDstatus_label.Text="CONEXION A BD:\r\nOK";

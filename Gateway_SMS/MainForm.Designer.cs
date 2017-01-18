@@ -41,6 +41,8 @@ namespace Gateway_SMS
 		private MetroFramework.Controls.MetroLabel label_estadoEnvio;
 		private MetroFramework.Controls.MetroProgressBar metroProgressBar1;
 		private MetroFramework.Controls.MetroGrid metroGrid1;
+		private System.Windows.Forms.PictureBox logoCespi;
+
 		
 	
 
@@ -68,6 +70,7 @@ namespace Gateway_SMS
 		private void InitializeComponent() 
 		{
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -90,6 +93,7 @@ namespace Gateway_SMS
 			this.SMSReady_label = new MetroFramework.Controls.MetroLabel();
 			this.CSQ_label = new MetroFramework.Controls.MetroLabel();
 			this.AT_label = new MetroFramework.Controls.MetroLabel();
+			this.logoCespi = new System.Windows.Forms.PictureBox();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.panel_progres = new MetroFramework.Controls.MetroPanel();
 			this.label_estadoEnvio = new MetroFramework.Controls.MetroLabel();
@@ -98,6 +102,7 @@ namespace Gateway_SMS
 			this.panel_conexion.SuspendLayout();
 			this.panel_verSMS.SuspendLayout();
 			this.panel_estado.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.logoCespi)).BeginInit();
 			this.panel_progres.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.metroGrid1)).BeginInit();
 			this.SuspendLayout();
@@ -310,6 +315,16 @@ namespace Gateway_SMS
 			this.AT_label.TabIndex = 0;
 			this.AT_label.Text = "AT";
 			// 
+			// logoCespi
+			// 
+			this.logoCespi.Image = ((System.Drawing.Image)(resources.GetObject("logoCespi.Image")));
+			this.logoCespi.InitialImage = ((System.Drawing.Image)(resources.GetObject("logoCespi.InitialImage")));
+			this.logoCespi.Location = new System.Drawing.Point(693, 442);
+			this.logoCespi.Name = "logoCespi";
+			this.logoCespi.Size = new System.Drawing.Size(160, 49);
+			this.logoCespi.TabIndex = 8;
+			this.logoCespi.TabStop = false;
+			// 
 			// timer1
 			// 
 			this.timer1.Tick += new System.EventHandler(this.Timer1Tick);
@@ -401,7 +416,7 @@ namespace Gateway_SMS
 			this.metroGrid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
 			this.metroGrid1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 			this.metroGrid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.metroGrid1.Size = new System.Drawing.Size(525, 363);
+			this.metroGrid1.Size = new System.Drawing.Size(525, 435);
 			this.metroGrid1.TabIndex = 7;
 			this.metroGrid1.Visible = false;
 			// 
@@ -412,7 +427,8 @@ namespace Gateway_SMS
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
-			this.ClientSize = new System.Drawing.Size(861, 442);
+			this.ClientSize = new System.Drawing.Size(861, 514);
+			this.Controls.Add(this.logoCespi);
 			this.Controls.Add(this.metroGrid1);
 			this.Controls.Add(this.panel_progres);
 			this.Controls.Add(this.panel_estado);
@@ -430,6 +446,7 @@ namespace Gateway_SMS
 			this.panel_verSMS.ResumeLayout(false);
 			this.panel_estado.ResumeLayout(false);
 			this.panel_estado.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.logoCespi)).EndInit();
 			this.panel_progres.ResumeLayout(false);
 			this.panel_progres.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.metroGrid1)).EndInit();

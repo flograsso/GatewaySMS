@@ -20,10 +20,10 @@
 
 
 /*DEBUG MODE ON*/
-#define DEBUG 
+/*#define DEBUG*/
 
 /*DEBUG MODE OFF*/
-/*#undef DEBUG*/
+#undef DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -113,6 +113,9 @@ namespace Gateway_SMS
 			button_verSMS.Visible=true;
 			button_verSMS.Location=new Point(6,0); // Subo boton de Ver SMS
 			panel_estado.Visible=false;
+			
+			/*Muevo logo Cespi*/
+			logoCespi.Location= new Point(10,280);
 			
 			processing =false;
 			
@@ -311,6 +314,10 @@ namespace Gateway_SMS
 			SMSReady_label.Text="";
 			BDstatus_label.Text="";
 			
+			
+			/*Muevo logo Cespi*/
+			logoCespi.Location= new Point(10,360);
+			
 			/*Seteo cursor en espera*/
 			Cursor.Current=Cursors.WaitCursor;
 			
@@ -438,6 +445,9 @@ namespace Gateway_SMS
 						
 						metroGrid1.Visible=true;
 						
+						/*Muevo logo Cespi*/
+						logoCespi.Location= new Point(650,450);
+						
 						/*Oculto boton de "Ver SMS"*/
 						panel_verSMS.Visible=true;
 						button_verSMS.Visible=false;
@@ -482,6 +492,7 @@ namespace Gateway_SMS
 			
 			/*Seteo cursor por default*/
 			Cursor.Current=Cursors.Default;
+			logoCespi.Visible=true;
 		}
 		
 		/*Boton de ver SMS*/
@@ -514,6 +525,9 @@ namespace Gateway_SMS
 				
 				/*Actualizo label de estado*/
 				BDstatus_label.Text="CONEXION A BD:\r\nOK";
+				
+				/*Muevo logo Cespi*/
+				logoCespi.Location= new Point(650,450);
 			}
 			else /*Falla el DBConnect*/
 			{
@@ -587,6 +601,7 @@ namespace Gateway_SMS
 			timer1.Enabled=true;
 			
 		}
+
 
 	}
 	

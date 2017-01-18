@@ -204,7 +204,6 @@ namespace Gateway_SMS
 			this.panel_verSMS.VerticalScrollbarBarColor = true;
 			this.panel_verSMS.VerticalScrollbarHighlightOnWheel = false;
 			this.panel_verSMS.VerticalScrollbarSize = 10;
-			this.panel_verSMS.Paint += new System.Windows.Forms.PaintEventHandler(this.Panel_verSMSPaint);
 			// 
 			// button_verSMS
 			// 
@@ -359,6 +358,8 @@ namespace Gateway_SMS
 			this.metroGrid1.AllowUserToDeleteRows = false;
 			this.metroGrid1.AllowUserToOrderColumns = true;
 			this.metroGrid1.AllowUserToResizeRows = false;
+			this.metroGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Left)));
 			this.metroGrid1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
 			this.metroGrid1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
 			this.metroGrid1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
@@ -385,7 +386,7 @@ namespace Gateway_SMS
 			this.metroGrid1.EnableHeadersVisualStyles = false;
 			this.metroGrid1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
 			this.metroGrid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-			this.metroGrid1.Location = new System.Drawing.Point(331, 70);
+			this.metroGrid1.Location = new System.Drawing.Point(328, 70);
 			this.metroGrid1.MultiSelect = false;
 			this.metroGrid1.Name = "metroGrid1";
 			this.metroGrid1.ReadOnly = true;
@@ -400,7 +401,7 @@ namespace Gateway_SMS
 			this.metroGrid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
 			this.metroGrid1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 			this.metroGrid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.metroGrid1.Size = new System.Drawing.Size(510, 363);
+			this.metroGrid1.Size = new System.Drawing.Size(525, 363);
 			this.metroGrid1.TabIndex = 7;
 			this.metroGrid1.Visible = false;
 			// 
@@ -411,7 +412,7 @@ namespace Gateway_SMS
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
-			this.ClientSize = new System.Drawing.Size(757, 442);
+			this.ClientSize = new System.Drawing.Size(861, 442);
 			this.Controls.Add(this.metroGrid1);
 			this.Controls.Add(this.panel_progres);
 			this.Controls.Add(this.panel_estado);
@@ -435,4 +436,5 @@ namespace Gateway_SMS
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
-		}}}
+		}
+		}}

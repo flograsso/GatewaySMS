@@ -63,6 +63,9 @@ namespace Gateway_SMS
 		/*Variable de running*/
 		bool processing;
 		
+		/*Constante de tiempo para procesar SMS (en ms)*/
+		const int timerInterval = 10000;
+		
 		
 		public MainForm()
 		{
@@ -580,7 +583,7 @@ namespace Gateway_SMS
 			
 			
 			/*Activo el timer*/
-			timer1.Interval=10000;
+			timer1.Interval=timerInterval;
 			timer1.Enabled=true;
 			
 		}

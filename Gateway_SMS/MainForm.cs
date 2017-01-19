@@ -20,10 +20,10 @@
 
 
 /*DEBUG MODE ON*/
-/*#define DEBUG*/
+#define DEBUG
 
 /*DEBUG MODE OFF*/
-#undef DEBUG
+/*#undef DEBUG*/
 
 using System;
 using System.Collections.Generic;
@@ -59,6 +59,7 @@ namespace Gateway_SMS
 		DBconnection dbConnection;
 		DataTable dt;
 		DateTime dateTime;
+		ContextMenuStrip contextMenuStrip;
 		
 		/*Variable de running*/
 		bool processing;
@@ -99,6 +100,7 @@ namespace Gateway_SMS
 			serialPort1 = new SerialPort();
 			dateTime = new DateTime();
 			sim900 = new SIM900(ref serialPort1);
+			contextMenuStrip = new ContextMenuStrip();
 			
 			/*Agrego evento manejador del dataReceived del serial*/
 			this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.SerialPort1DataReceived);
@@ -117,9 +119,41 @@ namespace Gateway_SMS
 			/*Muevo logo Cespi*/
 			logoCespi.Location= new Point(10,280);
 			
+			/*Agrego opciones al menu contextual*/
+			contextMenuStrip.Items.Add("Abrir");
+			contextMenuStrip.Items.Add("Cerrar");
+			
+			/*Asigno metodo al click del item del metodo contextual*/
+			contextMenuStrip.ItemClicked += new ToolStripItemClickedEventHandler(contextMenuStrip_Clicked);
+			
+			/*Asocio el menu contextual al notifyIcon*/
+			notifyIcon1.ContextMenuStrip=contextMenuStrip;
+			
 			processing =false;
 			
 		}
+		
+		/*Evento si se clickeo en un item del menu contextual*/
+		void contextMenuStrip_Clicked(object sender, ToolStripItemClickedEventArgs  e) {
+
+    		if (e.ClickedItem.Text=="Abrir")
+    		{
+    			Show();
+    			this.WindowState = FormWindowState.Normal;
+    		}
+    		else
+    		{
+    			if (e.ClickedItem.Text=="Cerrar")
+    			{
+    				Close();
+
+    			}
+    		}
+
+    		
+		}
+		
+
 		
 		/*Cierre del Main Form*/
 		void MainFormFormClosed(object sender, FormClosedEventArgs e)
@@ -224,6 +258,10 @@ namespace Gateway_SMS
 							/*Actualizo label estado envio*/
 							label_estadoEnvio.Text="ERROR AL ENVIAR";
 							
+							/*Muestro globito de error al enviar*/
+							notifyIcon1.BalloonTipIcon=System.Windows.Forms.ToolTipIcon.Error;
+	         				notifyIcon1.BalloonTipText="Error al enviar SMS";
+	         				notifyIcon1.ShowBalloonTip(2000);  
 						}
 						
 						/*Desselecciono celda*/
@@ -601,8 +639,32 @@ namespace Gateway_SMS
 			timer1.Enabled=true;
 			
 		}
-
-
+		
+		/*Eventos de cambio del MainForm*/
+		void MainFormResize(object sender, EventArgs e)
+		{
+	 		/*Si el mainForm esta miniminizado*/
+	    	if (this.WindowState == FormWindowState.Minimized)  
+	   		{  
+	    	  /*Escondo el MainForm*/		
+	          Hide();  
+	          
+	          /*Muestro el icono*/
+	          notifyIcon1.Visible = true;  
+	          
+	          /*Muestro globito avisando que sigue funcionando*/
+	          notifyIcon1.BalloonTipIcon=System.Windows.Forms.ToolTipIcon.Info;
+	          notifyIcon1.BalloonTipText="Gateway SMS sigue funcionando";
+	          notifyIcon1.ShowBalloonTip(1300);  
+			}
+		}
+		
+		/*Doble Click en el notify icon*/
+		void NotifyIcon1MouseDoubleClick(object sender, MouseEventArgs e)
+		{
+		     Show();  //Muestro el MainForm
+		     this.WindowState = FormWindowState.Normal;  
+		}
 	}
 	
 	

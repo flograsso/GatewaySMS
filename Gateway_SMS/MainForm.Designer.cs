@@ -42,6 +42,7 @@ namespace Gateway_SMS
 		private MetroFramework.Controls.MetroProgressBar metroProgressBar1;
 		private MetroFramework.Controls.MetroGrid metroGrid1;
 		private System.Windows.Forms.PictureBox logoCespi;
+		private System.Windows.Forms.NotifyIcon notifyIcon1;
 
 		
 	
@@ -99,6 +100,7 @@ namespace Gateway_SMS
 			this.label_estadoEnvio = new MetroFramework.Controls.MetroLabel();
 			this.metroProgressBar1 = new MetroFramework.Controls.MetroProgressBar();
 			this.metroGrid1 = new MetroFramework.Controls.MetroGrid();
+			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
 			this.panel_conexion.SuspendLayout();
 			this.panel_verSMS.SuspendLayout();
 			this.panel_estado.SuspendLayout();
@@ -420,6 +422,15 @@ namespace Gateway_SMS
 			this.metroGrid1.TabIndex = 7;
 			this.metroGrid1.Visible = false;
 			// 
+			// notifyIcon1
+			// 
+			this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+			this.notifyIcon1.BalloonTipText = "Prueba";
+			this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+			this.notifyIcon1.Text = "Gateway SMS";
+			this.notifyIcon1.Visible = true;
+			this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1MouseDoubleClick);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -434,6 +445,7 @@ namespace Gateway_SMS
 			this.Controls.Add(this.panel_estado);
 			this.Controls.Add(this.panel_conexion);
 			this.Controls.Add(this.panel_verSMS);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
 			this.Resizable = false;
@@ -441,6 +453,7 @@ namespace Gateway_SMS
 			this.Text = "Gateway SMS";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainFormFormClosed);
 			this.Load += new System.EventHandler(this.MainFormLoad);
+			this.Resize += new System.EventHandler(this.MainFormResize);
 			this.panel_conexion.ResumeLayout(false);
 			this.panel_conexion.PerformLayout();
 			this.panel_verSMS.ResumeLayout(false);

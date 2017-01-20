@@ -319,7 +319,7 @@ namespace Gateway_SMS
 			// 
 			// logoCespi
 			// 
-			this.logoCespi.Image = ((System.Drawing.Image)(resources.GetObject("logoCespi.Image")));
+			this.logoCespi.Image = global::Gateway_SMS.Resource1.logo_cespi;
 			this.logoCespi.InitialImage = ((System.Drawing.Image)(resources.GetObject("logoCespi.InitialImage")));
 			this.logoCespi.Location = new System.Drawing.Point(693, 442);
 			this.logoCespi.Name = "logoCespi";
@@ -418,7 +418,7 @@ namespace Gateway_SMS
 			this.metroGrid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
 			this.metroGrid1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 			this.metroGrid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.metroGrid1.Size = new System.Drawing.Size(525, 435);
+			this.metroGrid1.Size = new System.Drawing.Size(525, 351);
 			this.metroGrid1.TabIndex = 7;
 			this.metroGrid1.Visible = false;
 			// 
@@ -426,7 +426,7 @@ namespace Gateway_SMS
 			// 
 			this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
 			this.notifyIcon1.BalloonTipText = "Prueba";
-			this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+			this.notifyIcon1.Icon = global::Gateway_SMS.Resource1.favicon;
 			this.notifyIcon1.Text = "Gateway SMS";
 			this.notifyIcon1.Visible = true;
 			this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1MouseDoubleClick);
@@ -445,7 +445,7 @@ namespace Gateway_SMS
 			this.Controls.Add(this.panel_estado);
 			this.Controls.Add(this.panel_conexion);
 			this.Controls.Add(this.panel_verSMS);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Icon = global::Gateway_SMS.Resource1.favicon;
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
 			this.Resizable = false;

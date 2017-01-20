@@ -8,6 +8,8 @@
  * 
  * Software de envio masivo de SMS mediante comandos AT enviados por puerto serial
  * 
+ * Tiempo de procesamiento: 10s por SMS
+ * 
  * Instalacion GUI:
  * 	-Dentro del proyecyo en el SharpDevelop ir a "References" --> Add reference --> .NET Assembly --> Browser
  *  -Agregar los tres archivos .DLL que se encuentran en la carpeta ./Gatewat_SMS/GUI Metro/
@@ -18,12 +20,15 @@
 
 
 
+/*Set DEBUG_YES or DEBUG_NO*/
+#define DEBUG_NO
 
-/*DEBUG MODE ON*/
+
+#if DEBUG_YES
 #define DEBUG
-
-/*DEBUG MODE OFF*/
-/*#undef DEBUG*/
+#elif DEBUG_NO
+#undef DEBUG
+#endif
 
 using System;
 using System.Collections.Generic;
@@ -67,6 +72,7 @@ namespace Gateway_SMS
 		/*Constante de tiempo para procesar SMS (en ms)*/
 		const int timerInterval = 10000;
 		
+		int SMSCount;
 		
 		public MainForm()
 		{
@@ -130,6 +136,10 @@ namespace Gateway_SMS
 			notifyIcon1.ContextMenuStrip=contextMenuStrip;
 			
 			
+			/*Ignoro los errores de que un Thread modifica un objeto que no creo*/
+			CheckForIllegalCrossThreadCalls = false;
+			
+			
 			processing =false;
 			
 		}
@@ -178,23 +188,70 @@ namespace Gateway_SMS
 		}
 		#endif
 		
+		delegate void contarElementosAProcesarDelegate();
+		
+		void contarElementosAProcesar(){
+			if(this.InvokeRequired){
+				contarElementosAProcesarDelegate delegado = new contarElementosAProcesarDelegate(contarElementosAProcesar);
+				this.Invoke(delegado);
+			}
+			else
+			{
+				SMSCount = dbConnection.executeCount("SELECT COUNT(*) FROM `sms` WHERE state='FALSE';");
+				metroProgressBar1.Maximum=SMSCount;
+			}
+		}
+		
+		delegate void traerDatosDeDBDelegate();
+		
+		void traerDatosDeDB(){
+			if(this.InvokeRequired){
+				traerDatosDeDBDelegate delegado = new traerDatosDeDBDelegate(traerDatosDeDB);
+				this.Invoke(delegado);
+			}
+			else
+			{
+				/*Ejecuto query*/
+				dt.Clear();
+				dt=dbConnection.executeQuery("SELECT phone_id,date_in,state,number,message,date_out FROM `sms`;");
+				dt=mostrarDatos(dt);
+			}
+		}
+		
+		delegate void grabarEnDBDelegate(string phone_id);
+		
+		void grabarEnDB(string phone_id){
+			if(this.InvokeRequired){
+				grabarEnDBDelegate delegado = new grabarEnDBDelegate(grabarEnDB);
+				object[] param = new object[] {phone_id};
+				this.Invoke(delegado,param);
+				
+			}
+			else
+			{
+				/*Actualizo el estado en la BD a TRUE (ENVIADO)*/
+				dbConnection.executeQuery("UPDATE `sms` SET state='TRUE' WHERE phone_id ='"+phone_id+"';");
+				
+				/*Actualizo el campo FECHA OUT en la BD*/
+				dateTime=DateTime.Now;
+				dbConnection.executeQuery("UPDATE `sms` SET date_out='"+dateTime.ToString("yyyy-MM-dd HH:mm:ss")+"' WHERE phone_id ='"+phone_id+"';");
+			}
+		}
+		
+		
 		/*Funcion encargada de procesar los SMS pendientes de enviar. Es llamada por el timer*/
 		void procesarSMS(){
-
+			
 			
 			if(dbConnection.getConnectionState()==ConnectionState.Open){
 				
 				/*Consulto cuantos SMS hay por mandar*/
 				/*Seteo el valor máximo del progressBar*/
-				int SMSCount = dbConnection.executeCount("SELECT COUNT(*) FROM `sms` WHERE state='FALSE';");
-				metroProgressBar1.Maximum=SMSCount;
+				contarElementosAProcesar();
 				
 
-				/*Ejecuto query*/
-				dt.Clear();
-				dt=dbConnection.executeQuery("SELECT phone_id,date_in,state,number,message,date_out FROM `sms`;");
-				dt=mostrarDatos(dt);
 
+				traerDatosDeDB();
 				
 				int i = 0; //Indicador de la fila actual
 				int j = 0; //Cuenta cantidad de SMS procesados
@@ -240,12 +297,7 @@ namespace Gateway_SMS
 								
 								#endif
 						{
-							/*Actualizo el estado en la BD a TRUE (ENVIADO)*/
-							dbConnection.executeQuery("UPDATE `sms` SET state='TRUE' WHERE phone_id ='"+dr["phone_id"].ToString()+"';");
-							
-							/*Actualizo el campo FECHA OUT en la BD*/
-							dateTime=DateTime.Now;
-							dbConnection.executeQuery("UPDATE `sms` SET date_out='"+dateTime.ToString("yyyy-MM-dd HH:mm:ss")+"' WHERE phone_id ='"+dr["phone_id"].ToString()+"';");
+							grabarEnDB(dr["phone_id"].ToString());
 							
 							/*Actualizo el estado en la Grid (para evitarme ejecutar la consulta de nuevo)*/
 							metroGrid1.Rows[i].Cells[1].Value="ENVIADO";
@@ -330,8 +382,14 @@ namespace Gateway_SMS
 				/*Actualizo cursor*/
 				Cursor.Current=Cursors.WaitCursor;
 				
-				/*Proceso SMS*/
-				procesarSMS();
+				/*Creo tarea que envia los SMS*/
+				Task task = new Task(procesarSMS);
+				
+				/*Inicio la tarea*/
+				task.Start();
+				
+				/*Espero que termine sin bloquear UI*/
+				await task;
 				
 				/*Actualizo label*/
 				button_detenerProcesamiento.Enabled=true;
@@ -600,9 +658,14 @@ namespace Gateway_SMS
 			timer1.Enabled=false;
 			
 		}
+		
+		private void ShowMessageBox()
+		{
+			MessageBox.Show("Hello world.");
+		}
 
 		/*Boton de procesar SMS*/
-		void procesar_SMS_Click(object sender, EventArgs e)
+		async void procesar_SMS_Click(object sender, EventArgs e)
 		{
 			//Deshabilito los botones de procesar/no procesar
 			button_detenerProcesamiento.Enabled=false;
@@ -627,9 +690,16 @@ namespace Gateway_SMS
 			
 			/*Proceso los SMS*/
 			processing= true;
-			procesarSMS();
 			
-
+			/*Creo tarea que envia los SMS*/
+			Task task = new Task(procesarSMS);
+			
+			/*Inicio la tarea*/
+			task.Start();
+			
+			/*Espero que termine sin bloquear UI*/
+			await task;
+			
 			
 			/*FIN proceso SMS*/
 			/*Actualizo label estado*/

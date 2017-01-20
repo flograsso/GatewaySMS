@@ -129,6 +129,7 @@ namespace Gateway_SMS
 			/*Asocio el menu contextual al notifyIcon*/
 			notifyIcon1.ContextMenuStrip=contextMenuStrip;
 			
+			
 			processing =false;
 			
 		}
@@ -136,21 +137,21 @@ namespace Gateway_SMS
 		/*Evento si se clickeo en un item del menu contextual*/
 		void contextMenuStrip_Clicked(object sender, ToolStripItemClickedEventArgs  e) {
 
-    		if (e.ClickedItem.Text=="Abrir")
-    		{
-    			Show();
-    			this.WindowState = FormWindowState.Normal;
-    		}
-    		else
-    		{
-    			if (e.ClickedItem.Text=="Cerrar")
-    			{
-    				Close();
+			if (e.ClickedItem.Text=="Abrir")
+			{
+				Show();
+				this.WindowState = FormWindowState.Normal;
+			}
+			else
+			{
+				if (e.ClickedItem.Text=="Cerrar")
+				{
+					Close();
 
-    			}
-    		}
+				}
+			}
 
-    		
+			
 		}
 		
 
@@ -170,15 +171,16 @@ namespace Gateway_SMS
 		
 		
 		
-#if DEBUG
+		#if DEBUG
 		bool parche (){
 			Thread.Sleep(6000);
 			return true;
 		}
-#endif
+		#endif
 		
 		/*Funcion encargada de procesar los SMS pendientes de enviar. Es llamada por el timer*/
 		void procesarSMS(){
+
 			
 			if(dbConnection.getConnectionState()==ConnectionState.Open){
 				
@@ -228,15 +230,16 @@ namespace Gateway_SMS
 						panel_progres.Refresh();
 						
 						
-#if DEBUG					
+						#if DEBUG
 
-						if(parche()){
+						if(parche())
 
-#else
-						/*Envio SMS*/
-						if (sim900.enviarSMS(dr["number"].ToString(),dr["message"].ToString())){
-							
-#endif							
+							#else
+							/*Envio SMS*/
+							if (sim900.enviarSMS(dr["number"].ToString(),dr["message"].ToString()))
+								
+								#endif
+						{
 							/*Actualizo el estado en la BD a TRUE (ENVIADO)*/
 							dbConnection.executeQuery("UPDATE `sms` SET state='TRUE' WHERE phone_id ='"+dr["phone_id"].ToString()+"';");
 							
@@ -260,8 +263,8 @@ namespace Gateway_SMS
 							
 							/*Muestro globito de error al enviar*/
 							notifyIcon1.BalloonTipIcon=System.Windows.Forms.ToolTipIcon.Error;
-	         				notifyIcon1.BalloonTipText="Error al enviar SMS";
-	         				notifyIcon1.ShowBalloonTip(2000);  
+							notifyIcon1.BalloonTipText="Error al enviar SMS";
+							notifyIcon1.ShowBalloonTip(2000);
 						}
 						
 						/*Desselecciono celda*/
@@ -272,8 +275,11 @@ namespace Gateway_SMS
 					
 					i++;
 				}
+				
 			}
+			
 		}
+		
 		
 		/*Ordenar DataTable. direction = ASC o DESC*/
 		public static DataTable sortDataTable(DataTable dt, string colName, string direction)
@@ -376,17 +382,18 @@ namespace Gateway_SMS
 				MessageBox.Show("Puerto COM incorrecto","ERROR",MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
 			}
 			
-#if DEBUG
+			#if DEBUG
 
-			if (true){
-	
-
-#else
-			/*Si el puerto es correcto y el SIM esta conectado*/
-			if (serialPort1.IsOpen){
+			if (true)
 				
 
-#endif				
+				#else
+				/*Si el puerto es correcto y el SIM esta conectado*/
+				if (serialPort1.IsOpen)
+					
+
+					#endif
+			{
 				/*Actualizo label estado conexion*/
 				label_estadoConexion.Text="CONECTADO";
 				panel_estado.Show();
@@ -396,7 +403,7 @@ namespace Gateway_SMS
 				
 				/*Refresco el MainForm*/
 				this.Refresh();
-#if !DEBUG
+				#if !DEBUG
 				
 				/*Intento conectarme al SIM*/
 				if(sim900.connectSIM900()){
@@ -437,15 +444,15 @@ namespace Gateway_SMS
 					SMSReady_label.Text="ERROR PARA ENVIAR";
 					OK=false;
 				}
-#endif
+				#endif
 				panel_estado.Refresh();
 				
 				
 				
 				
-#if DEBUG		
+				#if DEBUG
 				OK=true;
-#endif
+				#endif
 
 				/*Si los comandos SIM dieron todos OK*/
 				if(OK){
@@ -622,6 +629,8 @@ namespace Gateway_SMS
 			processing= true;
 			procesarSMS();
 			
+
+			
 			/*FIN proceso SMS*/
 			/*Actualizo label estado*/
 			label_estadoEnvio.Text="EN ESPERA";
@@ -643,27 +652,27 @@ namespace Gateway_SMS
 		/*Eventos de cambio del MainForm*/
 		void MainFormResize(object sender, EventArgs e)
 		{
-	 		/*Si el mainForm esta miniminizado*/
-	    	if (this.WindowState == FormWindowState.Minimized)  
-	   		{  
-	    	  /*Escondo el MainForm*/		
-	          Hide();  
-	          
-	          /*Muestro el icono*/
-	          notifyIcon1.Visible = true;  
-	          
-	          /*Muestro globito avisando que sigue funcionando*/
-	          notifyIcon1.BalloonTipIcon=System.Windows.Forms.ToolTipIcon.Info;
-	          notifyIcon1.BalloonTipText="Gateway SMS sigue funcionando";
-	          notifyIcon1.ShowBalloonTip(1300);  
+			/*Si el mainForm esta miniminizado*/
+			if (this.WindowState == FormWindowState.Minimized)
+			{
+				/*Escondo el MainForm*/
+				Hide();
+				
+				/*Muestro el icono*/
+				notifyIcon1.Visible = true;
+				
+				/*Muestro globito avisando que sigue funcionando*/
+				notifyIcon1.BalloonTipIcon=System.Windows.Forms.ToolTipIcon.Info;
+				notifyIcon1.BalloonTipText="Gateway SMS sigue funcionando";
+				notifyIcon1.ShowBalloonTip(1300);
 			}
 		}
 		
 		/*Doble Click en el notify icon*/
 		void NotifyIcon1MouseDoubleClick(object sender, MouseEventArgs e)
 		{
-		     Show();  //Muestro el MainForm
-		     this.WindowState = FormWindowState.Normal;  
+			Show();  //Muestro el MainForm
+			this.WindowState = FormWindowState.Normal;
 		}
 	}
 	
@@ -800,7 +809,7 @@ namespace Gateway_SMS
 		/*  Envio de comandos
 		 * 		Return = null 	--> Comando falló
 		 *		Return !=null 	--> Comando OK
-		 */	
+		 */
 		String sendCommand(String command, int delaySec, String response){
 			
 			string received = "";

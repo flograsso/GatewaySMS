@@ -18,12 +18,8 @@ namespace Gateway_SMS
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 		private MetroFramework.Controls.MetroPanel panel_conexion;
-		private System.Windows.Forms.TextBox textBox_IMEI;
-		private MetroFramework.Controls.MetroLabel label5;
 		private MetroFramework.Controls.MetroLabel label_estadoConexion;
 		private MetroFramework.Controls.MetroLabel label3;
-		private System.Windows.Forms.TextBox textBox_port;
-		private MetroFramework.Controls.MetroLabel label2;
 		private MetroFramework.Controls.MetroPanel panel_estado;
 		private MetroFramework.Controls.MetroLabel SMSReady_label;
 		private MetroFramework.Controls.MetroLabel CSQ_label;
@@ -34,7 +30,6 @@ namespace Gateway_SMS
 		private MetroFramework.Controls.MetroLabel BDstatus_label;
 		private System.Windows.Forms.Timer timer1;
 		private MetroFramework.Controls.MetroTile button_conectar;
-		private MetroFramework.Controls.MetroTile button_verSMS;
 		private MetroFramework.Controls.MetroTile button_detenerProcesamiento;
 		private MetroFramework.Controls.MetroTile button_procesar_SMS;
 		private MetroFramework.Controls.MetroPanel panel_progres;
@@ -43,6 +38,7 @@ namespace Gateway_SMS
 		private MetroFramework.Controls.MetroGrid metroGrid1;
 		private System.Windows.Forms.PictureBox logoCespi;
 		private System.Windows.Forms.NotifyIcon notifyIcon1;
+		private System.Windows.Forms.Button config_button;
 
 		
 	
@@ -77,14 +73,9 @@ namespace Gateway_SMS
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.panel_conexion = new MetroFramework.Controls.MetroPanel();
 			this.button_conectar = new MetroFramework.Controls.MetroTile();
-			this.textBox_IMEI = new System.Windows.Forms.TextBox();
-			this.label5 = new MetroFramework.Controls.MetroLabel();
 			this.label_estadoConexion = new MetroFramework.Controls.MetroLabel();
 			this.label3 = new MetroFramework.Controls.MetroLabel();
-			this.textBox_port = new System.Windows.Forms.TextBox();
-			this.label2 = new MetroFramework.Controls.MetroLabel();
 			this.panel_verSMS = new MetroFramework.Controls.MetroPanel();
-			this.button_verSMS = new MetroFramework.Controls.MetroTile();
 			this.button_procesar_SMS = new MetroFramework.Controls.MetroTile();
 			this.button_detenerProcesamiento = new MetroFramework.Controls.MetroTile();
 			this.label6 = new MetroFramework.Controls.MetroLabel();
@@ -101,6 +92,7 @@ namespace Gateway_SMS
 			this.metroProgressBar1 = new MetroFramework.Controls.MetroProgressBar();
 			this.metroGrid1 = new MetroFramework.Controls.MetroGrid();
 			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+			this.config_button = new System.Windows.Forms.Button();
 			this.panel_conexion.SuspendLayout();
 			this.panel_verSMS.SuspendLayout();
 			this.panel_estado.SuspendLayout();
@@ -113,12 +105,8 @@ namespace Gateway_SMS
 			// 
 			this.panel_conexion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.panel_conexion.Controls.Add(this.button_conectar);
-			this.panel_conexion.Controls.Add(this.textBox_IMEI);
-			this.panel_conexion.Controls.Add(this.label5);
 			this.panel_conexion.Controls.Add(this.label_estadoConexion);
 			this.panel_conexion.Controls.Add(this.label3);
-			this.panel_conexion.Controls.Add(this.textBox_port);
-			this.panel_conexion.Controls.Add(this.label2);
 			this.panel_conexion.HorizontalScrollbarBarColor = true;
 			this.panel_conexion.HorizontalScrollbarHighlightOnWheel = false;
 			this.panel_conexion.HorizontalScrollbarSize = 10;
@@ -133,7 +121,7 @@ namespace Gateway_SMS
 			// button_conectar
 			// 
 			this.button_conectar.ActiveControl = null;
-			this.button_conectar.Location = new System.Drawing.Point(189, 35);
+			this.button_conectar.Location = new System.Drawing.Point(194, 18);
 			this.button_conectar.Margin = new System.Windows.Forms.Padding(0);
 			this.button_conectar.Name = "button_conectar";
 			this.button_conectar.Size = new System.Drawing.Size(89, 37);
@@ -143,26 +131,10 @@ namespace Gateway_SMS
 			this.button_conectar.UseSelectable = true;
 			this.button_conectar.Click += new System.EventHandler(this.buttonConectarClick);
 			// 
-			// textBox_IMEI
-			// 
-			this.textBox_IMEI.Location = new System.Drawing.Point(156, 10);
-			this.textBox_IMEI.Name = "textBox_IMEI";
-			this.textBox_IMEI.ReadOnly = true;
-			this.textBox_IMEI.Size = new System.Drawing.Size(122, 20);
-			this.textBox_IMEI.TabIndex = 7;
-			// 
-			// label5
-			// 
-			this.label5.Location = new System.Drawing.Point(114, 10);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(57, 26);
-			this.label5.TabIndex = 6;
-			this.label5.Text = "IMEI:";
-			// 
 			// label_estadoConexion
 			// 
 			this.label_estadoConexion.FontWeight = MetroFramework.MetroLabelWeight.Regular;
-			this.label_estadoConexion.Location = new System.Drawing.Point(64, 46);
+			this.label_estadoConexion.Location = new System.Drawing.Point(69, 29);
 			this.label_estadoConexion.Name = "label_estadoConexion";
 			this.label_estadoConexion.Size = new System.Drawing.Size(122, 26);
 			this.label_estadoConexion.TabIndex = 4;
@@ -170,33 +142,16 @@ namespace Gateway_SMS
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(4, 46);
+			this.label3.Location = new System.Drawing.Point(21, 29);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(58, 23);
 			this.label3.TabIndex = 3;
 			this.label3.Text = "Estado:";
 			// 
-			// textBox_port
-			// 
-			this.textBox_port.Location = new System.Drawing.Point(55, 10);
-			this.textBox_port.Name = "textBox_port";
-			this.textBox_port.Size = new System.Drawing.Size(41, 20);
-			this.textBox_port.TabIndex = 2;
-			this.textBox_port.Text = "COM5";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(4, 10);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(57, 26);
-			this.label2.TabIndex = 1;
-			this.label2.Text = "Puerto:";
-			// 
 			// panel_verSMS
 			// 
 			this.panel_verSMS.AutoSize = true;
 			this.panel_verSMS.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.panel_verSMS.Controls.Add(this.button_verSMS);
 			this.panel_verSMS.Controls.Add(this.button_procesar_SMS);
 			this.panel_verSMS.Controls.Add(this.button_detenerProcesamiento);
 			this.panel_verSMS.Controls.Add(this.label6);
@@ -206,23 +161,11 @@ namespace Gateway_SMS
 			this.panel_verSMS.HorizontalScrollbarSize = 10;
 			this.panel_verSMS.Location = new System.Drawing.Point(159, 165);
 			this.panel_verSMS.Name = "panel_verSMS";
-			this.panel_verSMS.Size = new System.Drawing.Size(166, 276);
+			this.panel_verSMS.Size = new System.Drawing.Size(166, 179);
 			this.panel_verSMS.TabIndex = 5;
 			this.panel_verSMS.VerticalScrollbarBarColor = true;
 			this.panel_verSMS.VerticalScrollbarHighlightOnWheel = false;
 			this.panel_verSMS.VerticalScrollbarSize = 10;
-			// 
-			// button_verSMS
-			// 
-			this.button_verSMS.ActiveControl = null;
-			this.button_verSMS.Location = new System.Drawing.Point(6, 182);
-			this.button_verSMS.Name = "button_verSMS";
-			this.button_verSMS.Size = new System.Drawing.Size(151, 91);
-			this.button_verSMS.TabIndex = 0;
-			this.button_verSMS.Text = "Ver SMS";
-			this.button_verSMS.TileTextFontSize = MetroFramework.MetroTileTextSize.Tall;
-			this.button_verSMS.UseSelectable = true;
-			this.button_verSMS.Click += new System.EventHandler(this.verSMSClick);
 			// 
 			// button_procesar_SMS
 			// 
@@ -231,10 +174,9 @@ namespace Gateway_SMS
 			this.button_procesar_SMS.Name = "button_procesar_SMS";
 			this.button_procesar_SMS.Size = new System.Drawing.Size(151, 85);
 			this.button_procesar_SMS.TabIndex = 11;
-			this.button_procesar_SMS.Text = "Procesar SMS";
+			this.button_procesar_SMS.Text = "Ver SMS";
 			this.button_procesar_SMS.TileTextFontSize = MetroFramework.MetroTileTextSize.Tall;
 			this.button_procesar_SMS.UseSelectable = true;
-			this.button_procesar_SMS.Click += new System.EventHandler(this.procesar_SMS_Click);
 			// 
 			// button_detenerProcesamiento
 			// 
@@ -319,6 +261,7 @@ namespace Gateway_SMS
 			// 
 			// logoCespi
 			// 
+			this.logoCespi.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.logoCespi.Image = global::Gateway_SMS.Resource1.logo_cespi;
 			this.logoCespi.InitialImage = ((System.Drawing.Image)(resources.GetObject("logoCespi.InitialImage")));
 			this.logoCespi.Location = new System.Drawing.Point(693, 442);
@@ -329,6 +272,7 @@ namespace Gateway_SMS
 			// 
 			// timer1
 			// 
+			this.timer1.Interval = 5000;
 			this.timer1.Tick += new System.EventHandler(this.Timer1Tick);
 			// 
 			// panel_progres
@@ -358,7 +302,7 @@ namespace Gateway_SMS
 			this.label_estadoEnvio.Size = new System.Drawing.Size(83, 38);
 			this.label_estadoEnvio.TabIndex = 3;
 			this.label_estadoEnvio.Text = "Estado Envio\r\n1/1";
-			this.label_estadoEnvio.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.label_estadoEnvio.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			this.label_estadoEnvio.Visible = false;
 			// 
 			// metroProgressBar1
@@ -431,6 +375,18 @@ namespace Gateway_SMS
 			this.notifyIcon1.Visible = true;
 			this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1MouseDoubleClick);
 			// 
+			// config_button
+			// 
+			this.config_button.AutoSize = true;
+			this.config_button.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.config_button.Image = global::Gateway_SMS.Resource1.config_icon;
+			this.config_button.Location = new System.Drawing.Point(287, 35);
+			this.config_button.Name = "config_button";
+			this.config_button.Size = new System.Drawing.Size(29, 29);
+			this.config_button.TabIndex = 9;
+			this.config_button.UseVisualStyleBackColor = true;
+			this.config_button.Click += new System.EventHandler(this.Button1Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -439,6 +395,7 @@ namespace Gateway_SMS
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
 			this.ClientSize = new System.Drawing.Size(861, 514);
+			this.Controls.Add(this.config_button);
 			this.Controls.Add(this.logoCespi);
 			this.Controls.Add(this.metroGrid1);
 			this.Controls.Add(this.panel_progres);
@@ -455,7 +412,6 @@ namespace Gateway_SMS
 			this.Load += new System.EventHandler(this.MainFormLoad);
 			this.Resize += new System.EventHandler(this.MainFormResize);
 			this.panel_conexion.ResumeLayout(false);
-			this.panel_conexion.PerformLayout();
 			this.panel_verSMS.ResumeLayout(false);
 			this.panel_estado.ResumeLayout(false);
 			this.panel_estado.PerformLayout();

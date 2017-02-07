@@ -49,10 +49,10 @@ INSERT INTO `sms` (`phone_id`, `date_in`, `date_out`, `number`, `message`, `stat
 (513, '2017-01-19 20:44:54', NULL, '2215089712', 'Mensaje 7/15 - Juan 1/3', 'FALSE'),
 (514, '2017-01-19 20:44:54', NULL, '2215089712', 'Mensaje 8/15 - Juan 2/3', 'FALSE'),
 (517, '2017-01-19 20:45:09', NULL, '2215089712', 'Mensaje 9/15 - Juan 3/3', 'FALSE'),
-(518, '2017-01-20 14:22:03', NULL, '2215928660 ', 'Mensaje 10/15 - Felicitas60 1/3\r\n', 'FALSE'),
-(519, '2017-01-20 14:22:03', NULL, '2215928660 ', 'Mensaje 11/15 - Felicitas60 2/3\r\n', 'FALSE'),
-(520, '2017-01-20 14:22:03', NULL, '2215928660 ', 'Mensaje 12/15 - Felicitas60 3/3\r\n', 'FALSE'),
-(521, '2017-01-20 14:23:48', NULL, '2216694731', 'Mensaje 13/15 - Felicitas31 1/3\r\n', 'FALSE'),
+(518, '2017-01-20 14:22:03', NULL, '2215928660 ', 'Mensaje 10/15 - Felicitas60 1/3', 'FALSE'),
+(519, '2017-01-20 14:22:03', NULL, '2215928660 ', 'Mensaje 11/15 - Felicitas60 2/3', 'FALSE'),
+(520, '2017-01-20 14:22:03', NULL, '2215928660 ', 'Mensaje 12/15 - Felicitas60 3/3', 'FALSE'),
+(521, '2017-01-20 14:23:48', NULL, '2216694731', 'Mensaje 13/15 - Felicitas31 1/3', 'FALSE'),
 (522, '2017-01-20 14:23:48', NULL, '2216694731', 'Mensaje 14/15 - Felicitas31 2/3', 'FALSE'),
 (523, '2017-01-20 14:23:48', NULL, '2216694731', 'Mensaje 15/15 - Felicitas31 3/3', 'FALSE');
 

@@ -8,7 +8,7 @@
  * 
  * Software de envio masivo de SMS mediante comandos AT enviados por puerto serial
  * 
- * Tiempo de procesamiento: 10s por SMS
+ * Tiempo de procesamiento aproximado: 10" por SMS
  * 
  * Instalacion GUI:
  * 	-Dentro del proyecyo en el SharpDevelop ir a "References" --> Add reference --> .NET Assembly --> Browser
@@ -21,7 +21,7 @@
 
 
 /*Set DEBUG_YES or DEBUG_NO*/
-#define DEBUG_NO
+#define DEBUG_YES
 
 
 #if DEBUG_YES
@@ -37,8 +37,6 @@ using System.Data.Common;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
-using MySql.Data;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.IO.Ports;
@@ -68,11 +66,17 @@ namespace Gateway_SMS
 		
 		/*Variable de running*/
 		bool processing;
-		
-		/*Constante de tiempo para procesar SMS (en ms)*/
-		const int timerInterval = 10000;
-		
+
+		/*Mantiene la cantidad de elementos a procesar*/
 		int SMSCount;
+		
+		/*Mantiene la cantidad de errores al intentar enviar un mensaje*/
+		int errorCount;
+		
+		/*Constante de maxima cantidad de errores antes de intentar reconectar*/
+		const int MAX_ERROR = 4;
+		
+
 		
 		public MainForm()
 		{
@@ -95,7 +99,7 @@ namespace Gateway_SMS
 			catch(Exception){}
 		}
 		
-		
+
 		
 		/*LOAD del Main Form*/
 		void MainFormLoad(object sender, EventArgs e)
@@ -112,18 +116,24 @@ namespace Gateway_SMS
 			this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.SerialPort1DataReceived);
 			
 			
+			/*Inicializo contador de errores*/
+			errorCount=0;
+			
 			//Oculto dataGrid
 			metroGrid1.Visible=false;
 			
-			//Muestro panel de ver SMS solo con boton de ver SMS
-			button_procesar_SMS.Visible=false;
-			button_detenerProcesamiento.Visible=false;
-			button_verSMS.Visible=true;
-			button_verSMS.Location=new Point(6,0); // Subo boton de Ver SMS
-			panel_estado.Visible=false;
 			
-			/*Muevo logo Cespi*/
-			logoCespi.Location= new Point(10,280);
+			
+			
+			
+			//Muestro panel de ver SMS solo con boton de ver SMS
+			button_detenerProcesamiento.Visible=false;
+
+			panel_estado.Visible=false;
+
+			
+			/*Refresco MainForm*/
+			this.Refresh();
 			
 			/*Agrego opciones al menu contextual*/
 			contextMenuStrip.Items.Add("Abrir");
@@ -135,9 +145,13 @@ namespace Gateway_SMS
 			/*Asocio el menu contextual al notifyIcon*/
 			notifyIcon1.ContextMenuStrip=contextMenuStrip;
 			
+			/*Muestro el icono*/
+			notifyIcon1.Visible = true;
 			
 			/*Ignoro los errores de que un Thread modifica un objeto que no creo*/
 			CheckForIllegalCrossThreadCalls = false;
+			
+			this.button_procesar_SMS.Click += new System.EventHandler(this.verSMS_Click);
 			
 			
 			processing =false;
@@ -160,11 +174,8 @@ namespace Gateway_SMS
 
 				}
 			}
-
-			
 		}
 		
-
 		
 		/*Cierre del Main Form*/
 		void MainFormFormClosed(object sender, FormClosedEventArgs e)
@@ -238,18 +249,29 @@ namespace Gateway_SMS
 			}
 		}
 		
+		bool SMSready(){
+			bool OK = false;
+			if (dbConnection.getConnectionState()==ConnectionState.Open){
+				if (serialPort1.IsOpen){
+					if(sim900.connectSIM900()){
+						OK=true;
+					}
+				}
+			}
+
+			return OK;
+		}
 		
 		/*Funcion encargada de procesar los SMS pendientes de enviar. Es llamada por el timer*/
 		void procesarSMS(){
+	
 			
-			
-			if(dbConnection.getConnectionState()==ConnectionState.Open){
+			if(SMSready())
+			{
 				
 				/*Consulto cuantos SMS hay por mandar*/
 				/*Seteo el valor máximo del progressBar*/
 				contarElementosAProcesar();
-				
-
 
 				traerDatosDeDB();
 				
@@ -257,6 +279,7 @@ namespace Gateway_SMS
 				int j = 0; //Cuenta cantidad de SMS procesados
 
 				foreach (DataRow dr in dt.Rows){
+					
 					
 					if (dr["state"].ToString() == "NO ENVIADO"){
 						
@@ -303,6 +326,9 @@ namespace Gateway_SMS
 							metroGrid1.Rows[i].Cells[1].Value="ENVIADO";
 							metroGrid1.Refresh();
 							
+							/*Si manda mensaje limpio el contador de errores*/
+							errorCount=0;
+							
 						}
 						else /*Error al enviar el mensaje*/
 						{
@@ -314,20 +340,24 @@ namespace Gateway_SMS
 							label_estadoEnvio.Text="ERROR AL ENVIAR";
 							
 							/*Muestro globito de error al enviar*/
-							notifyIcon1.BalloonTipIcon=System.Windows.Forms.ToolTipIcon.Error;
-							notifyIcon1.BalloonTipText="Error al enviar SMS";
-							notifyIcon1.ShowBalloonTip(2000);
+							notifyIcon_ShowMessage(6000,"Error al enviar SMS","warning");
+							
+							/*Sumo variable de cuenta de errores de envio*/
+							errorCount++;
 						}
 						
 						/*Desselecciono celda*/
 						metroGrid1.Rows[i].Selected=false;
-						
 						
 					}
 					
 					i++;
 				}
 				
+			}
+			else
+			{
+				errorCount=MAX_ERROR;
 			}
 			
 		}
@@ -368,16 +398,172 @@ namespace Gateway_SMS
 			return dt;
 		}
 		
+		/*Mostrar notificacion en la barra de tareas.
+		 *@param
+		 *	time: tiempo
+		 * 	text: texto mostrado
+		 * 	type: "warning" --> Alerta. Cualquier otro se muestra como info
+		 */
+		void notifyIcon_ShowMessage(int time,string text,string type){
+			
+			/*Seteo tipo de mensaje*/
+			if (type=="warning"){
+				notifyIcon1.BalloonTipIcon=ToolTipIcon.Warning;
+			}
+			else
+			{
+				notifyIcon1.BalloonTipIcon=ToolTipIcon.Info;
+			}
+			/*Seteo texto*/
+			notifyIcon1.BalloonTipText=text;
+			
+			/*Muestro globo el tiempo indicado*/
+			notifyIcon1.ShowBalloonTip(time);
+		}
+		
+		bool reconnectSIM(){
+			
+			bool OK= true;
+			bool finWhile=false;
+			
+			string mensajeError="";
+			
+			int reconnectCount = 0;
+			
+			/*Cambio el enabled de los botones*/
+			button_detenerProcesamiento.Enabled=false;
+			button_procesar_SMS.Enabled=false;
+			
+			
+			label_estadoEnvio.Text="ERROR DE ENVÍO\r\nRECONECTANDO...";
+			label_estadoEnvio.Visible=true;
+			this.Refresh();
+			
+			
+			processing=false;
+			
+			while (reconnectCount < 2 & !finWhile){
+				
+				reconnectCount++;
+				
+				label_estadoEnvio.Text=	"ERROR DE CONEXIÓN\r\n" +
+					"RECONECTANDO... "+reconnectCount.ToString()+"/2";
+				
+				
+				if (serialPort1.IsOpen){
+					try{
+						serialPort1.Close();
+						serialPort1.PortName=Properties.Settings1.Default.puertoCOM;
+						serialPort1.Open();
+					}
+					catch(Exception){
+						mensajeError="PUERTO COM INCORRECTO";
+						OK=false;
+					}
+				}
+				else
+				{
+					mensajeError="PUERTO COM INCORRECTO";
+					OK=false;
+				}
+				
+				if (serialPort1.IsOpen){
+					/*Intento conectarme al SIM*/
+					if(sim900.connectSIM900()){
+						/*Intento adquirir IMEI*/
+						if(sim900.setIMEI()){
+							/*Intento adquirir señal*/
+							if (sim900.setSignal()){
+								CSQ_label.Text="SEÑAL:"+sim900.getSignal();
+								/*Intento setear modo SMS*/
+								if (sim900.prepareSMS()){
+									finWhile=true;
+								}
+								else
+								{
+									label_estadoEnvio.Text=	"ERROR\r\nNO LISTO PARA ENVIAR SMS\r\n" +
+										"RECONECTANDO "+reconnectCount.ToString()+"/2";
+									mensajeError="MÓDULO GMS NO LISTO PARA ENVIAR SMS";
+									OK=false;
+								}
+							}
+							else
+							{
+								label_estadoEnvio.Text=	"ERROR\r\nSIM APAGADO\r\n" +
+									"RECONECTANDO "+reconnectCount.ToString()+"/2";
+								mensajeError="MÓDULO GMS APAGADO";
+								OK=false;
+							}
+						}
+						else
+						{
+							label_estadoEnvio.Text=	"ERROR\r\nSIM APAGADO\r\n" +
+								"RECONECTANDO "+reconnectCount.ToString()+"/2";
+							mensajeError="MÓDULO GMS APAGADO";
+							OK=false;
+						}
+						
+					}
+					else
+					{
+						label_estadoEnvio.Text=	"ERROR\r\nSIM APAGADO\r\n" +
+							"RECONECTANDO "+reconnectCount.ToString()+"/2";
+						mensajeError="MÓDULO GMS APAGADO";
+						OK=false;
+					}
+				}
+
+			}
+			/*Si todo dio OK*/
+			if (OK){
+				
+				processing=true;
+				timer1.Enabled=true;
+				label_estadoEnvio.Text="ES ESPERA...";
+				label_estadoConexion.Text="CONECTADO";
+				
+				/*Desactivo boton conectar*/
+				button_conectar.Enabled=false;
+
+				return true;
+			}
+			else
+			{
+				label_estadoEnvio.Text=	"ERROR\r\n"+mensajeError;
+				label_estadoConexion.Text="DESCONECTADO";
+				button_conectar.Enabled=true;
+				/*Habilito boton config*/
+				config_button.Enabled=true;
+				MessageBox.Show(mensajeError,"ERROR",MessageBoxButtons.OK,MessageBoxIcon.Error);
+				notifyIcon_ShowMessage(4000,mensajeError,"warning");
+				return false;
+			}
+		}
+		
 		/*Tick del timer*/
-		void Timer1Tick(object sender, EventArgs e)
+		async void Timer1Tick(object sender, EventArgs e)
 		{
+			timer1.Enabled=false;
 			if(processing){
-				/*Deshabilito el boton de parar procesamiento*/
+
+				/*Deshabilito los botones de procesar/no procesar*/
 				button_detenerProcesamiento.Enabled=false;
+				button_procesar_SMS.Enabled=false;
+				
+				
+				/*Muestro paneles progreso*/
+				panel_progres.Visible=true;
+				label_estadoEnvio.Visible=true;
+				metroProgressBar1.Visible=true;
+				metroProgressBar1.Value=0;
+				panel_progres.Refresh();
 				
 				/*Actualizo label estado*/
 				label_estadoEnvio.Text="PROCESANDO...";
 				panel_verSMS.Refresh();
+				
+				/*Refresco MainForm*/
+				this.Refresh();
 				
 				/*Actualizo cursor*/
 				Cursor.Current=Cursors.WaitCursor;
@@ -391,15 +577,33 @@ namespace Gateway_SMS
 				/*Espero que termine sin bloquear UI*/
 				await task;
 				
-				/*Actualizo label*/
+				/*FIN proceso SMS*/
+				
+				/*Habilito boton STOP*/
 				button_detenerProcesamiento.Enabled=true;
+				
+				/*Actualizo label*/
 				label_estadoEnvio.Text="EN ESPERA";
 				
 				/*Actualizo cursor*/
 				Cursor.Current=Cursors.Default;
 				
-				/*Comienzo timer nuevamente*/
-				timer1.Enabled=true;
+				/*Oculto barra progreso*/
+				metroProgressBar1.Visible=false;
+				
+				
+				/*Si se produjeron MAX_ERROR de errores de envio seguidos*/
+				if (errorCount>= MAX_ERROR){
+					
+					/*Paro el timer, por lo tanto no se vuelve a ejecutar este evento*/
+					timer1.Enabled=false;
+					reconnectSIM();
+				}
+				else
+				{
+					/*Comienzo timer nuevamente*/
+					timer1.Enabled=true;
+				}
 			}
 		}
 		
@@ -411,14 +615,13 @@ namespace Gateway_SMS
 			
 			/*Limpio labels*/
 			AT_label.Text="";
-			textBox_IMEI.Text="";
 			CSQ_label.Text="";
 			SMSReady_label.Text="";
 			BDstatus_label.Text="";
 			
+			/*Oculto label de estado envio*/
+			label_estadoEnvio.Visible=false;
 			
-			/*Muevo logo Cespi*/
-			logoCespi.Location= new Point(10,360);
 			
 			/*Seteo cursor en espera*/
 			Cursor.Current=Cursors.WaitCursor;
@@ -427,13 +630,16 @@ namespace Gateway_SMS
 			label_estadoConexion.Text="CONECTANDO...";
 			panel_conexion.Refresh();
 			
+			/*Deshailito boton de config*/
+			config_button.Enabled=false;
+			
 			/*Refresco MainForm*/
 			this.Refresh();
 			
 			/*Intento conectarme al puerto COM del textBox*/
 			try{
 				serialPort1.Close();
-				serialPort1.PortName=textBox_port.Text;
+				serialPort1.PortName=Properties.Settings1.Default.puertoCOM;
 				serialPort1.Open();
 			}
 			catch(Exception){
@@ -456,8 +662,6 @@ namespace Gateway_SMS
 				label_estadoConexion.Text="CONECTADO";
 				panel_estado.Show();
 				
-				/*Agrando el form*/
-				this.Size = new Size(327,307);
 				
 				/*Refresco el MainForm*/
 				this.Refresh();
@@ -466,47 +670,52 @@ namespace Gateway_SMS
 				/*Intento conectarme al SIM*/
 				if(sim900.connectSIM900()){
 					AT_label.Text="SIM900 ONLINE";
+					
+					/*Intento adquirir IMEI*/
+					if(sim900.setIMEI()){
+						
+						
+						/*Intento adquirir señal*/
+						if (sim900.setSignal()){
+							CSQ_label.Text="SEÑAL:"+sim900.getSignal();
+							
+							/*Intento setear modo SMS*/
+							if (sim900.prepareSMS()){
+								SMSReady_label.Text="LISTO PARA ENVIAR";
+							}
+							else
+							{
+								SMSReady_label.Text="ERROR PARA ENVIAR";
+								OK=false;
+							}
+						}
+						else
+						{
+							CSQ_label.Text="ERROR EN SEÑAL";
+							SMSReady_label.Text="ERROR PARA ENVIAR";
+							OK=false;
+						}
+					}
+					else
+					{
+
+						CSQ_label.Text="ERROR EN SEÑAL";
+						SMSReady_label.Text="ERROR PARA ENVIAR";
+						OK=false;
+					}
+					
 				}
 				else
 				{
 					AT_label.Text="SIM900 OFFLINE";
-					OK=false;
-				}
-				
-				/*Intento adquirir IMEI*/
-				if(sim900.setIMEI()){
-					textBox_IMEI.Text=sim900.getIMEI();
-				}
-				else
-				{
-					textBox_IMEI.Text="IMEI ERROR";
-					OK=false;
-				}
-				
-				/*Intento adquirir señal*/
-				if (sim900.setSignal()){
-					CSQ_label.Text="SEÑAL:"+sim900.getSignal();
-				}
-				else
-				{
 					CSQ_label.Text="ERROR EN SEÑAL";
-					OK=false;
-				}
-				
-				/*Intento setear modo SMS*/
-				if (sim900.prepareSMS()){
-					SMSReady_label.Text="LISTO PARA ENVIAR";
-				}
-				else
-				{
 					SMSReady_label.Text="ERROR PARA ENVIAR";
 					OK=false;
 				}
+				
+
 				#endif
 				panel_estado.Refresh();
-				
-				
-				
 				
 				#if DEBUG
 				OK=true;
@@ -517,9 +726,6 @@ namespace Gateway_SMS
 
 					/*Desactivo boton conectar*/
 					button_conectar.Enabled=false;
-					
-					/*Deshabilito textbox puerto*/
-					textBox_port.Enabled=false;
 
 					/*Seteo parametros*/
 					dbConnection.setdatabaseName("testcsharp");
@@ -529,15 +735,11 @@ namespace Gateway_SMS
 					
 					/*Me conecto a la DB*/
 					if (dbConnection.DBConnect()){
-						
-						/*Agrando para ver el dataGrid*/
-						this.Size = new Size(725, 400);
-						
+
 						/*Ejecuto query*/
 						dt.Clear();
 						dt=dbConnection.executeQuery("SELECT phone_id,date_in,state,number,message,date_out FROM `sms`;");
 						dt=mostrarDatos(dt);
-						
 						
 						/*Muestro resultados*/
 						metroGrid1.Columns[0].HeaderText="Fecha IN";
@@ -548,15 +750,19 @@ namespace Gateway_SMS
 						
 						metroGrid1.Visible=true;
 						
-						/*Muevo logo Cespi*/
-						logoCespi.Location= new Point(650,450);
 						
 						/*Oculto boton de "Ver SMS"*/
 						panel_verSMS.Visible=true;
-						button_verSMS.Visible=false;
-						button_procesar_SMS.Visible=true;
 						button_detenerProcesamiento.Visible=true;
 						button_detenerProcesamiento.Enabled=false;
+						
+						button_procesar_SMS.Text="Procesar SMS";
+						button_procesar_SMS.Click-=verSMS_Click;
+						button_procesar_SMS.Click+=procesar_SMS_Click;
+						
+						
+						/*Refresco MainForm*/
+						this.Refresh();
 						
 						/*Actualizo label de estado*/
 						BDstatus_label.Text="CONEXION A BD:\r\nOK";
@@ -574,32 +780,26 @@ namespace Gateway_SMS
 				{
 					/*Muestro panel estado y panel ver SMS*/
 					panel_verSMS.Visible=true;
-					button_verSMS.Visible=true;
-					button_verSMS.Location=new Point(6,0);
+
 					button_detenerProcesamiento.Visible=false;
 					button_procesar_SMS.Visible=false;
-					
+					config_button.Enabled=true;
 				}
-
-
 			}
-			
-			
 			else /*Puerto serial no abierto*/
 			{
 				label_estadoConexion.Text="DESCONECTADO";
 				panel_estado.Hide();
-
-				
+				config_button.Enabled=true;
 			}
 			
 			/*Seteo cursor por default*/
 			Cursor.Current=Cursors.Default;
-			logoCespi.Visible=true;
+			
 		}
 		
 		/*Boton de ver SMS*/
-		void verSMSClick(object sender, EventArgs e)
+		void verSMS_Click(object sender, EventArgs e)
 		{
 			/*Seteo parametros de DB*/
 			dbConnection.setdatabaseName("testcsharp");
@@ -629,8 +829,7 @@ namespace Gateway_SMS
 				/*Actualizo label de estado*/
 				BDstatus_label.Text="CONEXION A BD:\r\nOK";
 				
-				/*Muevo logo Cespi*/
-				logoCespi.Location= new Point(650,450);
+
 			}
 			else /*Falla el DBConnect*/
 			{
@@ -643,6 +842,9 @@ namespace Gateway_SMS
 		/*Boton detener procesamiento SMS*/
 		void DetenerProcesamientoClick(object sender, EventArgs e)
 		{
+			/*Habilito boton config*/
+			config_button.Enabled=true;
+			
 			/*Cambio el enabled de los botones*/
 			button_detenerProcesamiento.Enabled=false;
 			button_procesar_SMS.Enabled=true;
@@ -658,11 +860,6 @@ namespace Gateway_SMS
 			timer1.Enabled=false;
 			
 		}
-		
-		private void ShowMessageBox()
-		{
-			MessageBox.Show("Hello world.");
-		}
 
 		/*Boton de procesar SMS*/
 		async void procesar_SMS_Click(object sender, EventArgs e)
@@ -670,6 +867,9 @@ namespace Gateway_SMS
 			//Deshabilito los botones de procesar/no procesar
 			button_detenerProcesamiento.Enabled=false;
 			button_procesar_SMS.Enabled=false;
+			
+			/*Deshabilito boton config*/
+			config_button.Enabled=false;
 			
 			/*Muestro paneles progreso*/
 			panel_progres.Visible=true;
@@ -714,7 +914,7 @@ namespace Gateway_SMS
 			
 			
 			/*Activo el timer*/
-			timer1.Interval=timerInterval;
+			timer1.Interval=Properties.Settings1.Default.delay*1000; /*Paso de s a ms*/
 			timer1.Enabled=true;
 			
 		}
@@ -727,14 +927,9 @@ namespace Gateway_SMS
 			{
 				/*Escondo el MainForm*/
 				Hide();
-				
-				/*Muestro el icono*/
-				notifyIcon1.Visible = true;
-				
+
 				/*Muestro globito avisando que sigue funcionando*/
-				notifyIcon1.BalloonTipIcon=System.Windows.Forms.ToolTipIcon.Info;
-				notifyIcon1.BalloonTipText="Gateway SMS sigue funcionando";
-				notifyIcon1.ShowBalloonTip(1300);
+				notifyIcon_ShowMessage(2000,"Gateway SMS sigue funcionando","info");
 			}
 		}
 		
@@ -744,287 +939,18 @@ namespace Gateway_SMS
 			Show();  //Muestro el MainForm
 			this.WindowState = FormWindowState.Normal;
 		}
-	}
-	
-	
-	/*Clase para manejar la conexion a la DB*/
-	public class DBconnection{
-		
-		private MySqlConnection conexion;
-		private DataSet ds;
-		private MySqlDataAdapter adapter;
-		
-		private string server;
-		private string databaseName;
-		private string databaseUser;
-		private string databasePassword;
-		
-		public DBconnection(){
+		void Button1Click(object sender, EventArgs e)
+		{
+			Config_Form config_form = new Config_Form();
+			config_form.ShowDialog();
 			
-		}
-		
-
-		public void setServer(string server){
-			this.server=server;
-		}
-		
-		public void setdatabaseName(string databaseName){
-			this.databaseName=databaseName;
-		}
-		
-		public void setdatabaseUser(string databaseUser){
-			this.databaseUser=databaseUser;
-		}
-		
-		public void setdatabasePassword(string databasePassword){
-			this.databasePassword=databasePassword;
-		}
-		
-		/*Devuelve estado conexion*/
-		public ConnectionState getConnectionState(){
-			return conexion.State;
-		}
-		
-		/*Conecta a la base*/
-		public bool DBConnect(){
-			
-			string conexionString = "server="+server+";database="+databaseName+";user="+databaseUser+";password="+databasePassword+";Allow Zero Datetime=True;";
-			conexion = new MySqlConnection(conexionString);
-			
-			try
-			{
-				conexion.Open();
-			}
-			catch (Exception)
-			{
-				MessageBox.Show("No se pudo conectar a la base de datos");
-			}
-			
-			return (conexion.State==ConnectionState.Open);
-			
-		}
-		
-		/*Ejecuta query y devuelve un DataTable*/
-		public DataTable executeQuery(string query){
-			
-			adapter= new MySqlDataAdapter(query,conexion);
-			ds = new DataSet();
-			
-			
-			try
-			{
-				adapter.Fill(ds,"Phone_Table");
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message);
-			}
-			adapter = null;
-			
-			return ds.Tables["Phone_Table"];
-			
-			
-		}
-		
-		/*Ejecuta una query que devuelva un valor (integer)*/
-		public int executeCount(string sql){
-
-			MySqlCommand cmd = new MySqlCommand(sql, conexion);
-			Int32 count = Convert.ToInt32(cmd.ExecuteScalar());
-			cmd = null;
-			return count;
-		}
-	}
-	
-	/*Para manejar el módulo SIM*/
-	public class SIM900{
-		
-		private String receivedBuffer;
-		private string IMEI;
-		private string signal;
-		private SerialPort serialPort;
-		
-		/*Constructor*/
-		public SIM900(ref SerialPort serial){
-			receivedBuffer="";
-			IMEI="";
-			signal = "";
-			serialPort=serial;
-		}
-		
-		public String getSignal(){
-			return signal;
-		}
-		
-		public String getReceivedBuffer(){
-			return receivedBuffer;
-		}
-		
-		public void setReceivedBuffer(String receivedBuffer){
-			this.receivedBuffer=receivedBuffer;
-		}
-		
-		public String getIMEI(){
-			return IMEI;
-		}
-		
-		/*Espera hasta encontrar el string deseado dentro de el buffer*/
-		public void waitForResult(String response){
-			while((getReceivedBuffer().IndexOf(response)==-1)){
-				System.Threading.Thread.Sleep(100);
-			}
-		}
-		
-		
-		/*  Envio de comandos
-		 * 		Return = null 	--> Comando falló
-		 *		Return !=null 	--> Comando OK
-		 */
-		String sendCommand(String command, int delaySec, String response){
-			
-			string received = "";
-			receivedBuffer="";
-			
-			/*Envio Comando*/
-			serialPort.WriteLine((command+"\r\n"));
-			
-			/*Espero hasta que pase el tiempo delaySec o encuentre el string response en la respuesta*/
-			var task = Task.Factory.StartNew (() => waitForResult(response));
-			if (task.Wait(TimeSpan.FromSeconds(delaySec))){
-				/*Encontro string*/
-				received=receivedBuffer;
+			if(config_form.DialogResult==DialogResult.OK){
+				Properties.Settings1.Default.delay=config_form.delay;
+				Properties.Settings1.Default.puertoCOM=config_form.puertoCOM;
+				Properties.Settings1.Default.Save();
 				
 			}
-			else /*No Encontro string*/
-			{
-				
-				received = null;
-			}
-			
-			receivedBuffer="";
-			return received;
 		}
-		
-		
-		public bool enviarSMS(string numero, string mensaje){
-			bool OK=true;
-			
-			
-			if ((sendCommand("AT+CMGS=\""+numero+"\"",4,"ERROR")) != null){
-				OK=false;
-			}
-			
-			if ((sendCommand(mensaje,4,"ERROR")) != null){
-				OK=false;
-			}
-			
-			if ((sendCommand("\x1A",3,"OK")) == null){
-				OK=false;
-			}
-			
-			return OK;
-
-		}
-		
-		public bool connectSIM900(){
-			
-			String result = "";
-			bool OK = true;
-			
-			
-			if (sendCommand("ATE0",2,"OK")==null){
-				OK = false;
-			}
-			
-			if ((result = sendCommand("AT+CREG?",2,"OK")) != null){
-				if ((result.IndexOf("0,1")==-1)&&(result.IndexOf("1,1")==-1)){
-					OK=false;
-				}
-			}
-			else
-			{
-				OK=false;
-			}
-
-			
-			if (sendCommand("AT+CPIN?",2,"OK")==null){
-				OK=false;
-			}
-			
-			return OK;
-		}
-		
-		
-		public bool setIMEI(){
-			
-			string result="";
-			bool OK = true;
-			
-			if ((result = sendCommand("AT+CGSN",2,"OK")) != null){
-				IMEI=result.Substring(0,result.Length-3);
-			}
-			else
-			{
-				OK=false;
-			}
-			
-			return OK;
-			
-		}
-
-		
-		
-		public bool setSignal(){
-			
-			string result = "";
-			bool OK = true;
-			
-			if ((result = sendCommand("AT+CSQ",2,"OK")) != null){
-				
-				int i =0;
-				
-				
-				do{
-					i++;
-				}while ((result[i] != ':') && ( i<result.Length-1));
-				
-				if (Char.IsNumber(result[i+2]) && Char.IsNumber(result[i+3])){
-					signal=(Convert.ToString(result[i+2]))+(Convert.ToString(result[i+3]));
-
-				}
-				else
-					if (Char.IsNumber(result[i+2])){
-					signal="0"+result[i+2];
-					
-				}
-
-			}
-			else
-			{
-				OK=false;
-				
-			}
-			return OK;
-			
-		}
-		
-		public bool prepareSMS(){
-			
-			bool OK = true;
-			
-			if ((sendCommand("AT+CMGF=1",2,"OK")) == null){
-				OK=false;
-			}
-			
-			if (sendCommand("AT+CSCS=\"GSM\"",2,"OK") == null){
-				OK=false;
-			}
-			
-			
-			return OK;
-			
-		}
-
 	}
 }
 

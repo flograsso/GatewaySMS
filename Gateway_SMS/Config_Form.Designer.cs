@@ -21,6 +21,8 @@ namespace Gateway_SMS
 		private System.Windows.Forms.TextBox textBox2;
 		private MetroFramework.Controls.MetroLabel metroLabel2;
 		private MetroFramework.Components.MetroToolTip metroToolTip1;
+		private MetroFramework.Components.MetroToolTip metroToolTip2;
+		
 		
 		/// <summary>
 		/// Disposes resources used by the form.
@@ -50,6 +52,7 @@ namespace Gateway_SMS
 			this.textBox2 = new System.Windows.Forms.TextBox();
 			this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
 			this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
+			this.metroToolTip2 = new MetroFramework.Components.MetroToolTip();
 			this.SuspendLayout();
 			// 
 			// button_cancelar
@@ -113,9 +116,22 @@ namespace Gateway_SMS
 			// metroToolTip1
 			// 
 			this.metroToolTip1.AutomaticDelay = 200;
+			this.metroToolTip1.AutoPopDelay = 8000;
+			this.metroToolTip1.InitialDelay = 100;
+			this.metroToolTip1.ReshowDelay = 40;
 			this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Green;
 			this.metroToolTip1.StyleManager = null;
 			this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
+			// 
+			// metroToolTip2
+			// 
+			this.metroToolTip2.AutomaticDelay = 200;
+			this.metroToolTip2.AutoPopDelay = 8000;
+			this.metroToolTip2.InitialDelay = 100;
+			this.metroToolTip2.ReshowDelay = 40;
+			this.metroToolTip2.Style = MetroFramework.MetroColorStyle.Green;
+			this.metroToolTip2.StyleManager = null;
+			this.metroToolTip2.Theme = MetroFramework.MetroThemeStyle.Light;
 			// 
 			// Config_Form
 			// 

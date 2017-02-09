@@ -21,7 +21,7 @@
 
 
 /*Set DEBUG_YES or DEBUG_NO*/
-#define DEBUG_YES
+#define DEBUG_NO
 
 
 #if DEBUG_YES
@@ -755,6 +755,7 @@ namespace Gateway_SMS
 						panel_verSMS.Visible=true;
 						button_detenerProcesamiento.Visible=true;
 						button_detenerProcesamiento.Enabled=false;
+						button_procesar_SMS.Enabled=true;
 						
 						button_procesar_SMS.Text="Procesar SMS";
 						button_procesar_SMS.Click-=verSMS_Click;
@@ -782,7 +783,6 @@ namespace Gateway_SMS
 					panel_verSMS.Visible=true;
 
 					button_detenerProcesamiento.Visible=false;
-					button_procesar_SMS.Visible=false;
 					config_button.Enabled=true;
 				}
 			}

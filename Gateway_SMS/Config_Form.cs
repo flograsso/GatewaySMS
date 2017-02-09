@@ -38,6 +38,11 @@ namespace Gateway_SMS
 		{
 			metroToolTip1.SetToolTip(this.textBox2, "Tiempo de espera hasta un nuevo\n\rprocesamiento automático de SMS");
 			metroToolTip1.SetToolTip(this.metroLabel2, "Tiempo de espera hasta un nuevo\n\rprocesamiento automático de SMS");
+			
+			metroToolTip1.SetToolTip(this.textBox1, "Puerto COM donde está conectado el GSM.\n\r Se puede ver desde el admin de dispositivos de Windows");
+			metroToolTip1.SetToolTip(this.metroLabel1, "Puerto COM donde está conectado el GSM.\n\r Se puede ver desde el admin de dispositivos de Windows");
+				
+				
 			textBox1.Text=Properties.Settings1.Default.puertoCOM;
 			textBox2.Text=Properties.Settings1.Default.delay.ToString();
 		}
